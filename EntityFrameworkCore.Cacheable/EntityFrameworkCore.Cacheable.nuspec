@@ -15,8 +15,8 @@
     <tags>entity-framework database c-sharp dotnet-core dotnet-standard dotnet-framework orm cache
     </tags>
     <dependencies>
-      <dependency id="Data.HashFunction"/>
-      <dependency id="Extensions"/>
+      <dependency id="System.Data.HashFunction.xxHas"/>
+      <dependency id="Microsoft.Extensions.Caching.Memory"/>
     </dependencies>
   </metadata>
 </package>
