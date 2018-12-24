@@ -35,7 +35,7 @@ public partial class CacheableContext : DbContext
     [...]
 ```
 
-If you want to use the Redis as the preferred cache provider, first install the `CacheManager.StackExchange.Redis` package and then register its required services:
+Usage...
 ```csharp
 var cacheableQuery = cacheableContext.Books
 	.Include(d => d.Pages)
