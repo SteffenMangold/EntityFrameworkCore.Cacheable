@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
 [assembly: AssemblyTitle("EntityFrameworkCore.Cacheable")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Entity Framework Core Second Level Caching Library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Steffen Mangold")]
 [assembly: AssemblyProduct("EntityFrameworkCore.Cacheable")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
