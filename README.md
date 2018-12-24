@@ -12,7 +12,7 @@ To install EntityFrameworkCore.Cacheable, run the following command in the Packa
 PM> Install-Package EntityFrameworkCore.Cacheable
 ```
 
-You can also view the [package page](http://www.nuget.org/packages/EntityFrameworkCore.Cacheable/) on NuGet.
+You can also view the package page on NuGet. [![Version Status](https://img.shields.io/nuget/v/EntityFrameworkCore.Cacheable.svg)](https://www.nuget.org/packages/EntityFrameworkCore.Cacheable/)
 
 This library also uses the [Data.HashFunction](https://github.com/brandondahler/Data.HashFunction/) and [aspnet.Extensions](https://github.com/aspnet/Extensions) as InMemory cache.
 
