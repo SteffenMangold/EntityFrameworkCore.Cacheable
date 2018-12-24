@@ -43,3 +43,11 @@ var cacheableQuery = cacheableContext.Books
 	.Where(d => d.ID == 200)
 	.Cacheable(TimeSpan.FromSeconds(60));
 ```
+
+TODO
+-----
+
+- Add Async support
+- Extend options to support more kinds of caching duration (sliding windows, absolut...)
+- Replaceable ICacheProvider
+- Add Testing

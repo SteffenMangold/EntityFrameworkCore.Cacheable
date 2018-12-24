@@ -12,6 +12,9 @@ using System.Linq.Expressions;
 
 namespace EntityFrameworkCore.Cacheable
 {
+    /// <summary>
+    /// Extended <see cref="QueryCompiler"/> to handle query caching.
+    /// </summary>
     public class CustomQueryCompiler : QueryCompiler
     {
         private readonly IQueryContextFactory _queryContextFactory;
@@ -52,30 +55,33 @@ namespace EntityFrameworkCore.Cacheable
 
             var queryContext = _queryContextFactory.Create();
 
+            // search for cacheable operator and use last in chain
             var cacheableOperator = _queryModelGenerator.ParseQuery(query).ResultOperators
                 .OfType<CacheableResultOperator>()
-                .FirstOrDefault();
+                .LastOrDefault();
 
             query = _queryModelGenerator.ExtractParameters(_logger, query, queryContext);
 
+            // if cacheable operator is part of the query use cache logic
             if (cacheableOperator != null)
             {
+                // generate key to identify query
                 var queryKey = _cacheProvider.CreateQueryKey(query, queryContext.ParameterValues);
 
                 if (_cacheProvider.TryGetCachedResult<TResult>(queryKey, out TResult cacheResult))
                 {
-                    Debug.WriteLine($"Return cached result {{{queryKey.ToString()}}}");
-
+                    // cache was hit, so return cached query result
                     return cacheResult;
                 }
-                else
+                else // cache was not hit
                 {
-                    Debug.WriteLine($"Return uncached result {{{queryKey.ToString()}}}");
-
                     var cacheKey = _compiledQueryCacheKeyGenerator.GenerateCacheKey(query, false);
                     var compiledQuery = _compiledQueryCache.GetOrAddQuery(cacheKey, () => CreateCompiledQuery<TResult>(query));
 
+                    // excecute query
                     var queryResult = compiledQuery(queryContext);
+
+                    // addd query result to cache
                     _cacheProvider.SetCachedResult<TResult>(queryKey, queryResult, cacheableOperator);
 
                     return queryResult;

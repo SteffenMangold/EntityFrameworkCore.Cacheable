@@ -13,6 +13,13 @@ namespace EntityFrameworkCore.Cacheable
             = typeof(EntityFrameworkQueryableExtensions)
                 .GetTypeInfo().GetDeclaredMethod(nameof(Cacheable));
 
+        /// <summary>
+        /// Returns a new query where the result will be cached base on the <see cref="TimeSpan"/> parameter.
+        /// </summary>
+        /// <typeparam name="T">The type of entity being queried.</typeparam>
+        /// <param name="source">The source query.</param>
+        /// <param name="timeToLive">Limits the lifetime of cached query results.</param>
+        /// <returns>A new query where the result set will be cached.</returns>
         public static IQueryable<T> Cacheable<T>(this IQueryable<T> source, [NotParameterized] TimeSpan timeToLive)
         {
             Check.NotNull(source, nameof(source));
