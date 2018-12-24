@@ -120,7 +120,6 @@
   <ItemGroup>
     <Compile Include="CacheableExpressionNode.cs" />
     <Compile Include="CacheableResultOperator.cs" />
-    <Compile Include="CachedQueryProvider.cs" />
     <Compile Include="CacheProvider.cs" />
     <Compile Include="Check.cs" />
     <Compile Include="CustomMethodInfoBasedNodeTypeRegistryFactory.cs" />
