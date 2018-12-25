@@ -86,7 +86,7 @@ namespace EntityFrameworkCore.Cacheable
 
             var hash = __hashFunction.ComputeHash(expressionCacheKey);
 
-            return hash;
+            return hash.AsBase64String();
         }
 
 
