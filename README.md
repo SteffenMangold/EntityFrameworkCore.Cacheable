@@ -93,7 +93,7 @@ code, are actively maintaining it (including documentation), or in other ways
 being helpfull contributors to this project. 
 
 
-|                                                                              | Name                  | GitHub                                                  |
-| :--------------------------------------------------------------------------: | --------------------- | ------------------------------------------------------- |
-| <img src="https://avatars2.githubusercontent.com/u/20702171?size=72" />      | Steffen Mangold       | [@SteffenMangold](https://github.com/SteffenMangold)    |
-| <img src="https://avatars2.githubusercontent.com/u/1528107?size=72" />       | Smit Patel            | [@smitpatel](https://github.com/smitpatel)              |
+|                                                                                    | Name                  | GitHub                                                  |
+| :--------------------------------------------------------------------------------: | --------------------- | ------------------------------------------------------- |
+| <img src="https://avatars.githubusercontent.com/u/20702171?size=72" width="72"/>   | Steffen Mangold       | [@SteffenMangold](https://github.com/SteffenMangold)    |
+| <img src="https://avatars.githubusercontent.com/u/1528107?size=72" width="72"/>    | Smit Patel            | [@smitpatel](https://github.com/smitpatel)              |
