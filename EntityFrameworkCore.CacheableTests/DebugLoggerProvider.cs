@@ -24,14 +24,6 @@ namespace EntityFrameworkCore.CacheableTests
             return _loggers.SelectMany(l => l.Value.Entries.Where(e => e.Item1 == id).Select(e => e.Item2)).ToArray();
         }
 
-        public void Clear()
-        {
-            foreach (var logger in _loggers)
-            {
-                logger.Value.Entries.Clear();
-            }
-        }
-
         public void Dispose()
         {
             _loggers = null;
