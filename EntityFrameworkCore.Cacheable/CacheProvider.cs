@@ -58,9 +58,9 @@ namespace EntityFrameworkCore.Cacheable
         /// <param name="key">Key to identify query result</param>
         /// <param name="value">Query result</param>
         /// <param name="cacheableResultOperator">Options</param>
-        public void SetCachedResult<TResult>(object key, TResult value, CacheableResultOperator cacheableResultOperator)
+        public void SetCachedResult<TResult>(object key, TResult value, TimeSpan timeToLive)
         {
-            __cache.Set<TResult>(key, value, cacheableResultOperator.TimeToLive);
+            __cache.Set<TResult>(key, value, timeToLive);
         }
 
         /// <summary>

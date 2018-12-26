@@ -7,9 +7,12 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Remotion.Linq.Parsing.ExpressionVisitors.TreeEvaluation;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EntityFrameworkCore.Cacheable
 {
@@ -53,6 +56,8 @@ namespace EntityFrameworkCore.Cacheable
 
             _logFormatter = (queryKey, ex) => $"Cache hit for query [0x{queryKey}] with: {ex?.Message ?? "no error"}";
         }
+
+        
          
         public override TResult Execute<TResult>(Expression query)
         {
@@ -60,15 +65,14 @@ namespace EntityFrameworkCore.Cacheable
 
             var queryContext = _queryContextFactory.Create();
 
-            // search for cacheable operator and use last in chain
-            var cacheableOperator = _queryModelGenerator.ParseQuery(query).ResultOperators
-                .OfType<CacheableResultOperator>()
-                .LastOrDefault();
-
             query = _queryModelGenerator.ExtractParameters(_logger, query, queryContext);
 
+            // search for cacheable operator and extract parameter
+            var cachableExpressionVisitor = new CachableExpressionVisitor();
+            query = cachableExpressionVisitor.GetExtractCachableParameter(query, out bool isCacheable, out TimeSpan? timeToLive);
+            
             // if cacheable operator is part of the query use cache logic
-            if (cacheableOperator != null)
+            if (isCacheable)
             {
                 // generate key to identify query
                 var queryKey = _cacheProvider.CreateQueryKey(query, queryContext.ParameterValues);
@@ -89,7 +93,7 @@ namespace EntityFrameworkCore.Cacheable
                     var queryResult = compiledQuery(queryContext);
 
                     // addd query result to cache
-                    _cacheProvider.SetCachedResult<TResult>(queryKey, queryResult, cacheableOperator);
+                    _cacheProvider.SetCachedResult<TResult>(queryKey, queryResult, timeToLive.Value);
 
                     return queryResult;
                 }

@@ -9,7 +9,7 @@ namespace EntityFrameworkCore.Cacheable
 {
     public static class EntityFrameworkQueryableExtensions
     {
-        internal static readonly MethodInfo CacheablehMethodInfo
+        internal static readonly MethodInfo CacheableMethodInfo
             = typeof(EntityFrameworkQueryableExtensions)
                 .GetTypeInfo().GetDeclaredMethod(nameof(Cacheable));
 
@@ -30,7 +30,7 @@ namespace EntityFrameworkCore.Cacheable
                     ? source.Provider.CreateQuery<T>(
                         Expression.Call(
                             instance: null,
-                            method: CacheablehMethodInfo.MakeGenericMethod(typeof(T)),
+                            method: CacheableMethodInfo.MakeGenericMethod(typeof(T)),
                             arg0: source.Expression,
                             arg1: Expression.Constant(timeToLive)))
                     : source;

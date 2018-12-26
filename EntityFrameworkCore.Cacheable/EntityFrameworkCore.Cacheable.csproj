@@ -118,6 +118,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CachableExpressionVisitor.cs" />
     <Compile Include="CacheableExpressionNode.cs" />
     <Compile Include="CacheableResultOperator.cs" />
     <Compile Include="CacheProvider.cs" />

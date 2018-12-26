@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace EntityFrameworkCore.Cacheable
@@ -23,7 +24,7 @@ namespace EntityFrameworkCore.Cacheable
         /// <param name="key">Key to identify query result</param>
         /// <param name="value">Query result</param>
         /// <param name="cacheableResultOperator">Options</param>
-        void SetCachedResult<TResult>(object key, TResult value, CacheableResultOperator cacheableResultOperator);
+        void SetCachedResult<TResult>(object key, TResult value, TimeSpan timeToLive);
 
         /// <summary>
         /// Try to get a cached query result from storage.

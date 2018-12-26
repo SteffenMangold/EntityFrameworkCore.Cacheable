@@ -10,7 +10,7 @@ namespace EntityFrameworkCore.Cacheable
     public class CacheableExpressionNode : ResultOperatorExpressionNodeBase
     {
         public static readonly IReadOnlyCollection<MethodInfo> SupportedMethods = new[]
-            { EntityFrameworkQueryableExtensions.CacheablehMethodInfo };
+            { EntityFrameworkQueryableExtensions.CacheableMethodInfo };
 
         private readonly ConstantExpression _cacheableExpression;
 

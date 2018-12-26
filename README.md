@@ -53,7 +53,7 @@ Or use the `DbContextOptions` parameter overload of the `DbContext` constructor.
 
 ```csharp
 var options = new DbContextOptionsBuilder<BloggingContext>()  
-	.UseSecondLevelMemoryCache)
+	.UseSecondLevelMemoryCache()
 	.Options;
 
 using (var cacheableContext = new CacheableContext(options))
