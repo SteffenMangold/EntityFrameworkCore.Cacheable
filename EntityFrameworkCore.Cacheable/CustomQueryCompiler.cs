@@ -96,6 +96,8 @@ namespace EntityFrameworkCore.Cacheable
                     // addd query result to cache
                     _cacheProvider.SetCachedResult<TResult>(queryKey, queryResult, timeToLive.Value);
 
+                    _logger.Logger.Log<object>(LogLevel.Debug, CacheableEventId.QueryResultCached, queryKey, null, _logFormatter);
+
                     return queryResult;
                 }
             }

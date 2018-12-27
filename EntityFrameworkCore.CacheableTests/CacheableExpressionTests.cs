@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -248,40 +249,73 @@ namespace EntityFrameworkCore.Cacheable.Tests
             // create test entries
             using (var initContext = new BloggingContext(options))
             {
-                initContext.Blogs.Add(new Blog { BlogId = 1, Url = "http://sample.com/cats" });
-                initContext.Blogs.Add(new Blog { BlogId = 2, Url = "http://sample.com/catfish" });
-                initContext.Blogs.Add(new Blog { BlogId = 3, Url = "http://sample.com/dogs" });
+                initContext.ChangeTracker.AutoDetectChangesEnabled = false;
+
+                for (int i = 0; i < 100000; i++)
+                {
+                    initContext.Blogs.Add(new Blog
+                    {
+                        Url = $"http://sample.com/cat{i}",
+                        
+                        Posts = new List<Post>
+                        {
+                            { new Post {Title = $"Post{1}"} }
+                        }
+                    }); 
+                }
                 initContext.SaveChanges();
             }
 
             using (var performanceContext = new BloggingContext(options))
             {
+                decimal loopCount = 10000;
+
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
 
                 // uncached queries
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < loopCount; i++)
                 {
-                    performanceContext.Blogs
-                        .Where(d => d.BlogId == 1)
+                    var result = performanceContext.Blogs
+                        .Where(d => d.BlogId >= 0)
+                        .Take(100)
                         .ToList();
                 }
 
                 var uncachedTimeSpan = watch.Elapsed;
+
+                // caching query result
+                performanceContext.Blogs
+                    .Where(d => d.BlogId >= 0)
+                    .Cacheable(TimeSpan.FromMinutes(10))
+                    .Take(100)
+                    .ToList();
+
                 watch.Restart();
 
                 // cached queries
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < loopCount; i++)
                 {
-                    performanceContext.Blogs
-                        .Where(d => d.BlogId == 1)
+                    var result = performanceContext.Blogs
+                        .Where(d => d.BlogId >= 0)
                         .Cacheable(TimeSpan.FromMinutes(10))
+                        .Take(100)
                         .ToList();
                 }
 
                 var cachedTimeSpan = watch.Elapsed;
 
 
+                // find log entries
+                var queryResultsCachedCount = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.QueryResultCached).Count();
+                var cacheHitsCount = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit).Count();
+
+                // check cache event counts
+                Assert.IsTrue(queryResultsCachedCount == 1);
+                Assert.IsTrue(cacheHitsCount == loopCount);
+
+                Debug.WriteLine($"Average database query duration [+{TimeSpan.FromTicks((long)(uncachedTimeSpan.Ticks / loopCount))}].");
+                Debug.WriteLine($"Average cache query duration [+{TimeSpan.FromTicks((long)(cachedTimeSpan.Ticks / loopCount))}].");
                 Debug.WriteLine($"Cache is x{Math.Round((Decimal)uncachedTimeSpan.Ticks / (Decimal)cachedTimeSpan.Ticks, 1)} times faster.");
 
                 Assert.IsTrue(cachedTimeSpan < uncachedTimeSpan);

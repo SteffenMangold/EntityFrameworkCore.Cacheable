@@ -32,7 +32,7 @@ namespace EntityFrameworkCore.Cacheable.Diagnostics
         {
             // Query events
             CacheHit = CacheableBaseId,
-            //RowLimitingOperationWithoutOrderByWarning,
+            QueryResultCached,
             //FirstWithoutOrderByAndFilterWarning,
 
             //// Infrastructure events
@@ -52,5 +52,15 @@ namespace EntityFrameworkCore.Cacheable.Diagnostics
         ///     </para>
         /// </summary>
         public static readonly EventId CacheHit = MakeQueryId(Id.CacheHit);
+
+        /// <summary>
+        ///     <para>
+        ///         A query result is stored by the cache.
+        ///     </para>
+        ///     <para>
+        ///         This event is in the <see cref="DbLoggerCategory.Query" /> category.
+        ///     </para>
+        /// </summary>
+        public static readonly EventId QueryResultCached = MakeQueryId(Id.QueryResultCached);
     }
 }

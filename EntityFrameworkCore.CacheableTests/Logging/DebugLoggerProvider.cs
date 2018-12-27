@@ -10,10 +10,8 @@ namespace EntityFrameworkCore.CacheableTests.Logging
 {
     public sealed class DebugLoggerProvider : ILoggerProvider
     {
-        private const int _maxQueuedMessages = 1024;
-
         private readonly ConcurrentDictionary<string, DebugLogger> _loggers;
-        private readonly BlockingCollection<LogMessageEntry> _messageQueue = new BlockingCollection<LogMessageEntry>(_maxQueuedMessages);
+        private readonly ConcurrentBag<LogMessageEntry> _messageQueue = new ConcurrentBag<LogMessageEntry>();
 
         public IReadOnlyCollection<LogMessageEntry> Entries => _messageQueue;
 
@@ -29,7 +27,6 @@ namespace EntityFrameworkCore.CacheableTests.Logging
 
         public void Dispose()
         {
-            _messageQueue.Dispose();
         }
     }
 }

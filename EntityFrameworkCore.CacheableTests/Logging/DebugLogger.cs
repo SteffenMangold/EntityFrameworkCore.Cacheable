@@ -13,9 +13,9 @@ namespace EntityFrameworkCore.CacheableTests.Logging
     {
         private const int _maxQueuedMessages = 1024;
 
-        private readonly BlockingCollection<LogMessageEntry> _messageQueue;
+        private readonly ConcurrentBag<LogMessageEntry> _messageQueue;
                 
-        public DebugLogger(BlockingCollection<LogMessageEntry> messageQueue)
+        public DebugLogger(ConcurrentBag<LogMessageEntry> messageQueue)
         {
             _messageQueue = messageQueue;
         }
