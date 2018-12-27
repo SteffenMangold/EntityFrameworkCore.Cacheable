@@ -6,7 +6,7 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <iconurl>https://github.com/SteffenMangold/EntityFrameworkCore.Cacheable/nuget_icon.png?raw=true</iconurl>
+    <iconUrl>https://raw.githubusercontent.com/SteffenMangold/EntityFrameworkCore.Cacheable/master/nuget_icon.png</iconUrl>
     <licenseUrl>https://github.com/SteffenMangold/EntityFrameworkCore.Cacheable/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/SteffenMangold/EntityFrameworkCore.Cacheable</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
