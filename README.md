@@ -1,6 +1,8 @@
 ﻿# EntityFrameworkCore.Cacheable
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8h2kg4gjcv85w6wg?svg=true)](https://ci.appveyor.com/project/SteffenMangold/entityframeworkcore-cacheable)
+[![Maintainability](https://api.codeclimate.com/v1/badges/541ce9c419c532bcd292/maintainability)](https://codeclimate.com/github/SteffenMangold/EntityFrameworkCore.Cacheable/maintainability)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/SteffenMangold/EntityFrameworkCore.Cacheable.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/SteffenMangold/EntityFrameworkCore.Cacheable/alerts/)
 
 A high performance second level query cache for [Entity Framework Core](https://github.com/aspnet/EntityFrameworkCore).
 
