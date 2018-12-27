@@ -13,7 +13,6 @@ namespace EntityFrameworkCore.Cacheable
         public static DbContextOptionsBuilder UseSecondLevelMemoryCache(this DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.ReplaceService<IQueryCompiler, CustomQueryCompiler>();
-            optionsBuilder.ReplaceService<INodeTypeProviderFactory, CustomMethodInfoBasedNodeTypeRegistryFactory>();
 
             return optionsBuilder;
         }

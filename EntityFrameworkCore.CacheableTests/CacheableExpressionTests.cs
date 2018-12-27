@@ -1,5 +1,7 @@
-﻿using EntityFrameworkCore.CacheableTests;
+﻿using EntityFrameworkCore.Cacheable.Diagnostics;
+using EntityFrameworkCore.CacheableTests;
 using EntityFrameworkCore.CacheableTests.BusinessTestLogic;
+using EntityFrameworkCore.CacheableTests.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,23 +16,18 @@ namespace EntityFrameworkCore.Cacheable.Tests
     [TestCategory("EntityFrameworkCore.Cacheable")]
     public class CustomQueryCompilerTests
     {
-        private static DbContextOptions<BloggingContext> CreateDatabaseOption(LoggerFactory debugLoggerFactory)
+        /// <summary>
+        /// Testing cache expiration functionality.
+        /// </summary>
+        //[TestMethod]
+        public void ExpirationTest()
         {
-            // use InMemory Database for testing
-            return new DbContextOptionsBuilder<BloggingContext>()
-                .UseLoggerFactory(debugLoggerFactory)
-                .UseInMemoryDatabase(databaseName: "BusinessTestLogicDB")
-                .Options;
-        }
+            var loggerProvider = new DebugLoggerProvider();
+            var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
-        [ClassInitialize]
-        public static void HandlerTestsInit(TestContext testContext)
-        {
-            // create logger to detect cache hits
-            var debugLoggerProvider = new DebugLoggerProvider();
-            
             var options = new DbContextOptionsBuilder<BloggingContext>()
-                .UseInMemoryDatabase(databaseName: "BusinessTestLogicDB")
+                .UseLoggerFactory(loggerFactory)
+                .UseInMemoryDatabase(databaseName: "ExpirationTest")
                 .Options;
 
             // create test entries
@@ -40,19 +37,9 @@ namespace EntityFrameworkCore.Cacheable.Tests
                 initContext.Blogs.Add(new Blog { BlogId = 2, Url = "http://sample.com/catfish" });
                 initContext.Blogs.Add(new Blog { BlogId = 3, Url = "http://sample.com/dogs" });
                 initContext.SaveChanges();
-            }            
-        }
+            }
 
-        /// <summary>
-        /// Testing cache expiration functionality.
-        /// </summary>
-        [TestMethod]
-        public void ExpirationTest()
-        {
-            // create logger to detect cache hits
-            var debugLoggerProvider = new DebugLoggerProvider();
-
-            using (var expirationContext = new BloggingContext(CreateDatabaseOption(new LoggerFactory(new[] { debugLoggerProvider }))))
+            using (var expirationContext = new BloggingContext(options))
             {
                 // shoud not hit cache, because first execution
                 var result = expirationContext.Blogs
@@ -82,22 +69,36 @@ namespace EntityFrameworkCore.Cacheable.Tests
             }
 
             // find "cache hit" log entries
-            var logs = debugLoggerProvider.FindLogEnties(100199);
+            var logs = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit);
 
             // cache should hit one time
-            Assert.IsTrue(logs.Length == 1);
+            Assert.IsTrue(logs.Count() == 1);
         }
 
         /// <summary>
         /// Testing entity result cache functionality.
         /// </summary>
-        //[TestMethod]
+        [TestMethod]
         public void EntityExpressionTest()
         {
-            // create logger to detect cache hits
-            var debugLoggerProvider = new DebugLoggerProvider();
+            var loggerProvider = new DebugLoggerProvider();
+            var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
-            using (var entityContext = new BloggingContext(CreateDatabaseOption(new LoggerFactory(new[] { debugLoggerProvider }))))
+            var options = new DbContextOptionsBuilder<BloggingContext>()
+                .UseLoggerFactory(loggerFactory)
+                .UseInMemoryDatabase(databaseName: "EntityExpressionTest")
+                .Options;
+
+            // create test entries
+            using (var initContext = new BloggingContext(options))
+            {
+                initContext.Blogs.Add(new Blog { BlogId = 1, Url = "http://sample.com/cats" });
+                initContext.Blogs.Add(new Blog { BlogId = 2, Url = "http://sample.com/catfish" });
+                initContext.Blogs.Add(new Blog { BlogId = 3, Url = "http://sample.com/dogs" });
+                initContext.SaveChanges();
+            }
+
+            using (var entityContext = new BloggingContext(options))
             {
                 // shoud not hit cache, because first execution
                 var result = entityContext.Blogs
@@ -115,10 +116,10 @@ namespace EntityFrameworkCore.Cacheable.Tests
             }
 
             // find "cache hit" log entries
-            var logs = debugLoggerProvider.FindLogEnties(100199);
+            var logs = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit);
 
             // cache should hit one time
-            Assert.IsTrue(logs.Length == 1);
+            Assert.IsTrue(logs.Count() == 1);
         }
 
         /// <summary>
@@ -127,10 +128,24 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void ProjectionExpressionTest()
         {
-            // create logger to detect cache hits
-            var debugLoggerProvider = new DebugLoggerProvider();
+            var loggerProvider = new DebugLoggerProvider();
+            var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
-            using (var projectionContext = new BloggingContext(CreateDatabaseOption(new LoggerFactory(new[] { debugLoggerProvider }))))
+            var options = new DbContextOptionsBuilder<BloggingContext>()
+                .UseLoggerFactory(loggerFactory)
+                .UseInMemoryDatabase(databaseName: "ProjectionExpressionTest")
+                .Options;
+
+            // create test entries
+            using (var initContext = new BloggingContext(options))
+            {
+                initContext.Blogs.Add(new Blog { BlogId = 1, Url = "http://sample.com/cats" });
+                initContext.Blogs.Add(new Blog { BlogId = 2, Url = "http://sample.com/catfish" });
+                initContext.Blogs.Add(new Blog { BlogId = 3, Url = "http://sample.com/dogs" });
+                initContext.SaveChanges();
+            }
+
+            using (var projectionContext = new BloggingContext(options))
             {
                 // shoud not hit cache, because first execution
                 var result = projectionContext.Blogs
@@ -158,10 +173,10 @@ namespace EntityFrameworkCore.Cacheable.Tests
             }
 
             // find "cache hit" log entries
-            var logs = debugLoggerProvider.FindLogEnties(100199);
+            var logs = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit);
 
             // cache should hit one time
-            Assert.IsTrue(logs.Length == 1);
+            Assert.IsTrue(logs.Count() == 1);
         }
 
         /// <summary>
@@ -170,10 +185,24 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void ConstantExpressionTest()
         {
-            // create logger to detect cache hits
-            var debugLoggerProvider = new DebugLoggerProvider();
+            var loggerProvider = new DebugLoggerProvider();
+            var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
-            using (var constantContext = new BloggingContext(CreateDatabaseOption(new LoggerFactory(new[] { debugLoggerProvider }))))
+            var options = new DbContextOptionsBuilder<BloggingContext>()
+                .UseLoggerFactory(loggerFactory)
+                .UseInMemoryDatabase(databaseName: "ConstantExpressionTest")
+                .Options;
+
+            // create test entries
+            using (var initContext = new BloggingContext(options))
+            {
+                initContext.Blogs.Add(new Blog { BlogId = 1, Url = "http://sample.com/cats" });
+                initContext.Blogs.Add(new Blog { BlogId = 2, Url = "http://sample.com/catfish" });
+                initContext.Blogs.Add(new Blog { BlogId = 3, Url = "http://sample.com/dogs" });
+                initContext.SaveChanges();
+            }
+
+            using (var constantContext = new BloggingContext(options))
             {
                 // shoud not hit cache, because first execution
                 var result = constantContext.Blogs
@@ -193,10 +222,10 @@ namespace EntityFrameworkCore.Cacheable.Tests
             }
 
             // find "cache hit" log entries
-            var logs = debugLoggerProvider.FindLogEnties(100199);
+            var logs = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit);
 
             // cache should hit one time
-            Assert.IsTrue(logs.Length == 1);
+            Assert.IsTrue(logs.Count() == 1);
         }
         
         /// <summary>
@@ -208,10 +237,24 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void PerformanceTest()
         {
-            // create logger to detect cache hits
-            var debugLoggerProvider = new DebugLoggerProvider();
+            var loggerProvider = new DebugLoggerProvider();
+            var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
-            using (var performanceContext = new BloggingContext(CreateDatabaseOption(new LoggerFactory(new[] { debugLoggerProvider }))))
+            var options = new DbContextOptionsBuilder<BloggingContext>()
+                .UseLoggerFactory(loggerFactory)
+                .UseInMemoryDatabase(databaseName: "PerformanceTest")
+                .Options;
+
+            // create test entries
+            using (var initContext = new BloggingContext(options))
+            {
+                initContext.Blogs.Add(new Blog { BlogId = 1, Url = "http://sample.com/cats" });
+                initContext.Blogs.Add(new Blog { BlogId = 2, Url = "http://sample.com/catfish" });
+                initContext.Blogs.Add(new Blog { BlogId = 3, Url = "http://sample.com/dogs" });
+                initContext.SaveChanges();
+            }
+
+            using (var performanceContext = new BloggingContext(options))
             {
                 Stopwatch watch = new Stopwatch();
                 watch.Start();

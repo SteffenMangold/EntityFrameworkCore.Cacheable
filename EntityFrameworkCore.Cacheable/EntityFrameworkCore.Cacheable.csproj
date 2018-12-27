@@ -119,11 +119,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CachableExpressionVisitor.cs" />
-    <Compile Include="CacheableExpressionNode.cs" />
-    <Compile Include="CacheableResultOperator.cs" />
     <Compile Include="CacheProvider.cs" />
     <Compile Include="Check.cs" />
-    <Compile Include="CustomMethodInfoBasedNodeTypeRegistryFactory.cs" />
+    <Compile Include="CoreEventId.cs" />
     <Compile Include="CustomQueryCompiler.cs" />
     <Compile Include="DbContextOptionsBuilderExtensions.cs" />
     <Compile Include="EntityFrameworkQueryableExtensions.cs" />
@@ -134,6 +132,9 @@
     <None Include="app.config" />
     <None Include="EntityFrameworkCore.Cacheable.nuspec" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Diagnostics\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

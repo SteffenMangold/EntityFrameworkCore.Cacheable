@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EntityFrameworkCore.Cacheable.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Query;
@@ -79,7 +80,7 @@ namespace EntityFrameworkCore.Cacheable
 
                 if (_cacheProvider.TryGetCachedResult<TResult>(queryKey, out TResult cacheResult))
                 {
-                    _logger.Logger.Log<object>(LogLevel.Debug, new EventId(100199, name: "Cache hit"), queryKey, null, _logFormatter);
+                    _logger.Logger.Log<object>(LogLevel.Debug, CacheableEventId.CacheHit, queryKey, null, _logFormatter);
 
                     // cache was hit, so return cached query result
                     return cacheResult;

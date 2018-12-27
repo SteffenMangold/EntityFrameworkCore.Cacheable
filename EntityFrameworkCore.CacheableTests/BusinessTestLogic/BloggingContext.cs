@@ -19,11 +19,5 @@ namespace EntityFrameworkCore.CacheableTests.BusinessTestLogic
 
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Post> Posts { get; set; }
-
-        public override void Dispose()
-        {
-            this.Database.EnsureDeleted();
-            //base.Dispose();
-        }
     }
 }
