@@ -12,6 +12,28 @@ Entity Framework (EF) Core Cacheable is an extention library for the popular Ent
 
 It provides caching functionality for all types of query results. Based on expression tree and parameters, the context decide rather to execute query against database or returning result from memory.
 
+## How fast is it?
+
+
+This a sample result of 1,000 uncached and cached queries, called agains a really good performing MSSQL-database.
+
+```
+Average database query duration [+00:00:00.1698972].
+Average cache query duration [+00:00:00.0000650].
+Cached queries are x2,611 times faster.
+```
+
+Even with a InMemory test database, the results are significant faster.
+
+```
+Average database query duration [+00:00:00.0026076].
+Average cache query duration [+00:00:00.0000411].
+Cached queries are x63 times faster.
+```
+
+The performance gain can be even higher, depending on the database performance.
+
+
 Install via NuGet
 -----------------
 

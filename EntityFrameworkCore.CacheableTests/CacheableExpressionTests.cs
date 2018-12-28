@@ -374,7 +374,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
 
                 Debug.WriteLine($"Average database query duration [+{TimeSpan.FromTicks((long)(uncachedTimeSpan.Ticks / loopCount))}].");
                 Debug.WriteLine($"Average cache query duration [+{TimeSpan.FromTicks((long)(cachedTimeSpan.Ticks / loopCount))}].");
-                Debug.WriteLine($"Cache is x{Math.Round((Decimal)uncachedTimeSpan.Ticks / (Decimal)cachedTimeSpan.Ticks, 1)} times faster.");
+                Debug.WriteLine($"Cached queries are x{(Decimal)uncachedTimeSpan.Ticks / (Decimal)cachedTimeSpan.Ticks:N0} times faster.");
 
                 Assert.IsTrue(cachedTimeSpan < uncachedTimeSpan);
             }
