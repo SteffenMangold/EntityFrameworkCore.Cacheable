@@ -296,6 +296,8 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void PerformanceTest()
         {
+            decimal loopCount = 10000;
+
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
@@ -324,9 +326,32 @@ namespace EntityFrameworkCore.Cacheable.Tests
                 initContext.SaveChanges();
             }
 
+            var rawOptions = new DbContextOptionsBuilder<BloggingContext>()
+                .UseInMemoryDatabase(databaseName: "PerformanceTest")
+                .Options;
+
+            using (var performanceContext = new BloggingContext(rawOptions))
+            {
+                Stopwatch watch = new Stopwatch();
+                watch.Start();
+
+                // raw queries
+                for (int i = 0; i < loopCount; i++)
+                {
+                    var result = performanceContext.Blogs
+                        .Where(d => d.BlogId >= 0)
+                        .Take(100)
+                        .ToList();
+                }
+
+                var rawTimeSpan = watch.Elapsed;
+
+                Debug.WriteLine($"Average default context database query duration [+{TimeSpan.FromTicks((long)(rawTimeSpan.Ticks / loopCount))}].");
+            }
+
             using (var performanceContext = new BloggingContext(options))
             {
-                decimal loopCount = 10000;
+                
 
                 Stopwatch watch = new Stopwatch();
                 watch.Start();

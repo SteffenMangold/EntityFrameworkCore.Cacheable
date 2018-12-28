@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Query.ExpressionVisitors.Internal;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -77,7 +78,10 @@ namespace EntityFrameworkCore.Cacheable
             // search for cacheable operator and extract parameter
             var cachableExpressionVisitor = new CachableExpressionVisitor();
             query = cachableExpressionVisitor.GetExtractCachableParameter(query, out bool isCacheable, out TimeSpan? timeToLive);
-            
+
+
+            query = _queryModelGenerator.ExtractParameters(_logger, query, queryContext);
+
             // if cacheable operator is part of the query use cache logic
             if (isCacheable)
             {
@@ -94,49 +98,82 @@ namespace EntityFrameworkCore.Cacheable
                 else // cache was not hit
                 {
                     var cacheKey = _compiledQueryCacheKeyGenerator.GenerateCacheKey(query, false);
-                    var compiledQuery = _compiledQueryCache.GetOrAddQuery(cacheKey, () => CreateCompiledQuery<TResult>(query));
+                    var compiledQuery = _compiledQueryCache.GetOrAddQuery(cacheKey, () => CompileQueryCore<TResult>(query, _queryModelGenerator, _database, _logger, _contextType));
 
                     // excecute query
                     var queryResult = compiledQuery(queryContext);
 
 
 
-                    var queryResultInstance = GetCompiledQueryResult<TResult>(query, queryResult, _queryModelGenerator);
+                    //var queryResultInstance = GetCompiledQueryResult<TResult>(query, queryResult, _queryModelGenerator);
 
 
                     // addd query result to cache
-                    _cacheProvider.SetCachedResult<TResult>(queryKey, queryResultInstance, timeToLive.Value);
+                    _cacheProvider.SetCachedResult<TResult>(queryKey, queryResult, timeToLive.Value);
 
                     _logger.Logger.Log<object>(LogLevel.Debug, CacheableEventId.QueryResultCached, queryKey, null, _logFormatter);
 
-                    return queryResultInstance;
+                    return queryResult;
                 }
             }
             else
             {
                 var cacheKey = _compiledQueryCacheKeyGenerator.GenerateCacheKey(query, false);
-                var compiledQuery = _compiledQueryCache.GetOrAddQuery(cacheKey, () => CreateCompiledQuery<TResult>(query));
+                var compiledQuery = _compiledQueryCache.GetOrAddQuery(cacheKey, () => CompileQueryCore<TResult>(query, _queryModelGenerator, _database, _logger, _contextType));
 
                 return compiledQuery(queryContext);
             }
         }
 
-        
-        private TResult GetCompiledQueryResult<TResult>(Expression query, TResult queryResult, IQueryModelGenerator queryModelGenerator)
+        private static MethodInfo CompileQueryMethod { get; }
+            = typeof(IDatabase).GetTypeInfo()
+                .GetDeclaredMethod(nameof(IDatabase.CompileQuery));
+
+        private static Func<QueryContext, TResult> CompileQueryCore<TResult>(
+           Expression query,
+           IQueryModelGenerator queryModelGenerator,
+           IDatabase database,
+           IDiagnosticsLogger<DbLoggerCategory.Query> logger,
+           Type contextType)
         {
             var queryModel = queryModelGenerator.ParseQuery(query);
-            var resultItemType = (queryModel.GetOutputDataInfo() as StreamedSequenceInfo)?.ResultItemType ?? typeof(TResult);
-            
+
+            var resultItemType
+                = (queryModel.GetOutputDataInfo()
+                      as StreamedSequenceInfo)?.ResultItemType
+                  ?? typeof(TResult);
+
             if (resultItemType == typeof(TResult))
             {
-                return queryResult;
+                var compiledQuery = database.CompileQuery<TResult>(queryModel);
+
+                return qc =>
+                {
+                    try
+                    {
+                        return compiledQuery(qc).First();
+                    }
+                    catch (Exception exception)
+                    {
+                        logger.QueryIterationFailed(contextType, exception);
+
+                        throw;
+                    }
+                };
             }
-            
-            var genericToListMethod = ToListMethod.MakeGenericMethod(new Type[] { resultItemType });
 
-            var result = genericToListMethod.Invoke(queryResult, new object[] { queryResult });
+            try
+            {
+                return (Func<QueryContext, TResult>)CompileQueryMethod
+                    .MakeGenericMethod(resultItemType)
+                    .Invoke(database, new object[] { queryModel });
+            }
+            catch (TargetInvocationException e)
+            {
+                //ExceptionDispatchInfo.Capture(e.InnerException).Throw();
 
-            return (TResult)result;
+                throw;
+            }
         }
 
         //private static Func<QueryContext, TResult> CompileQueryCore<TResult>(
