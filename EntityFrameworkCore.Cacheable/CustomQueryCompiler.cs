@@ -6,12 +6,15 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
+using Remotion.Linq.Clauses.StreamedData;
 using Remotion.Linq.Parsing.ExpressionVisitors.TreeEvaluation;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,6 +36,11 @@ namespace EntityFrameworkCore.Cacheable
         private readonly CacheProvider _cacheProvider;
 
         private readonly Func<object, Exception, string> _logFormatter;
+
+        private static MethodInfo ToListMethod { get; }
+           = typeof(Enumerable).GetTypeInfo()
+               .GetDeclaredMethod(nameof(Enumerable.ToList));
+
 
         public CustomQueryCompiler(IQueryContextFactory queryContextFactory, ICompiledQueryCache compiledQueryCache, ICompiledQueryCacheKeyGenerator compiledQueryCacheKeyGenerator
             , IDatabase database, IDiagnosticsLogger<DbLoggerCategory.Query> logger, ICurrentDbContext currentContext, IQueryModelGenerator queryModelGenerator, IEvaluatableExpressionFilter evaluatableExpressionFilter)
@@ -66,8 +74,6 @@ namespace EntityFrameworkCore.Cacheable
 
             var queryContext = _queryContextFactory.Create();
 
-            query = _queryModelGenerator.ExtractParameters(_logger, query, queryContext);
-
             // search for cacheable operator and extract parameter
             var cachableExpressionVisitor = new CachableExpressionVisitor();
             query = cachableExpressionVisitor.GetExtractCachableParameter(query, out bool isCacheable, out TimeSpan? timeToLive);
@@ -93,12 +99,17 @@ namespace EntityFrameworkCore.Cacheable
                     // excecute query
                     var queryResult = compiledQuery(queryContext);
 
+
+
+                    var queryResultInstance = GetCompiledQueryResult<TResult>(query, queryResult, _queryModelGenerator);
+
+
                     // addd query result to cache
-                    _cacheProvider.SetCachedResult<TResult>(queryKey, queryResult, timeToLive.Value);
+                    _cacheProvider.SetCachedResult<TResult>(queryKey, queryResultInstance, timeToLive.Value);
 
                     _logger.Logger.Log<object>(LogLevel.Debug, CacheableEventId.QueryResultCached, queryKey, null, _logFormatter);
 
-                    return queryResult;
+                    return queryResultInstance;
                 }
             }
             else
@@ -109,5 +120,65 @@ namespace EntityFrameworkCore.Cacheable
                 return compiledQuery(queryContext);
             }
         }
+
+        
+        private TResult GetCompiledQueryResult<TResult>(Expression query, TResult queryResult, IQueryModelGenerator queryModelGenerator)
+        {
+            var queryModel = queryModelGenerator.ParseQuery(query);
+            var resultItemType = (queryModel.GetOutputDataInfo() as StreamedSequenceInfo)?.ResultItemType ?? typeof(TResult);
+
+            var genericToListMethod = ToListMethod.MakeGenericMethod(new Type[] { resultItemType });
+
+            var result = genericToListMethod.Invoke(queryResult, new object[] { queryResult });
+
+            return (TResult)result;
+        }
+
+        //private static Func<QueryContext, TResult> CompileQueryCore<TResult>(
+        //    Expression query,
+        //    IQueryModelGenerator queryModelGenerator,
+        //    IDatabase database,
+        //    IDiagnosticsLogger<DbLoggerCategory.Query> logger,
+        //    Type contextType)
+        //{
+        //    var queryModel = queryModelGenerator.ParseQuery(query);
+
+        //    var resultItemType
+        //        = (queryModel.GetOutputDataInfo()
+        //              as StreamedSequenceInfo)?.ResultItemType
+        //          ?? typeof(TResult);
+
+        //    if (resultItemType == typeof(TResult))
+        //    {
+        //        var compiledQuery = database.CompileQuery<TResult>(queryModel);
+
+        //        return qc =>
+        //        {
+        //            try
+        //            {
+        //                return compiledQuery(qc).First();
+        //            }
+        //            catch (Exception exception)
+        //            {
+        //                logger.QueryIterationFailed(contextType, exception);
+
+        //                throw;
+        //            }
+        //        };
+        //    }
+
+        //    try
+        //    {
+        //        return (Func<QueryContext, TResult>)CompileQueryMethod
+        //            .MakeGenericMethod(resultItemType)
+        //            .Invoke(database, new object[] { queryModel });
+        //    }
+        //    catch (TargetInvocationException e)
+        //    {
+        //        ExceptionDispatchInfo.Capture(e.InnerException).Throw();
+
+        //        throw;
+        //    }
+        //}
     }
 }
