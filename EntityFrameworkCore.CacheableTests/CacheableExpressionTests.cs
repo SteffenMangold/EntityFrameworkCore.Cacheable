@@ -296,7 +296,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void PerformanceTest()
         {
-            decimal loopCount = 10000;
+            decimal loopCount = 1000;
 
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -327,6 +327,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
             }
 
             var rawOptions = new DbContextOptionsBuilder<BloggingContext>()
+                .UseLoggerFactory(loggerFactory)
                 .UseInMemoryDatabase(databaseName: "PerformanceTest")
                 .Options;
 
@@ -351,8 +352,6 @@ namespace EntityFrameworkCore.Cacheable.Tests
 
             using (var performanceContext = new BloggingContext(options))
             {
-                
-
                 Stopwatch watch = new Stopwatch();
                 watch.Start();
 
@@ -399,7 +398,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
 
                 Debug.WriteLine($"Average database query duration [+{TimeSpan.FromTicks((long)(uncachedTimeSpan.Ticks / loopCount))}].");
                 Debug.WriteLine($"Average cache query duration [+{TimeSpan.FromTicks((long)(cachedTimeSpan.Ticks / loopCount))}].");
-                Debug.WriteLine($"Cached queries are x{(Decimal)uncachedTimeSpan.Ticks / (Decimal)cachedTimeSpan.Ticks:N0} times faster.");
+                Debug.WriteLine($"Cached queries are x{((Decimal)uncachedTimeSpan.Ticks / (Decimal)cachedTimeSpan.Ticks)-1:N2} times faster.");
 
                 Assert.IsTrue(cachedTimeSpan < uncachedTimeSpan);
             }
