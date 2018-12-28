@@ -126,7 +126,12 @@ namespace EntityFrameworkCore.Cacheable
         {
             var queryModel = queryModelGenerator.ParseQuery(query);
             var resultItemType = (queryModel.GetOutputDataInfo() as StreamedSequenceInfo)?.ResultItemType ?? typeof(TResult);
-
+            
+            if (resultItemType == typeof(TResult))
+            {
+                return queryResult;
+            }
+            
             var genericToListMethod = ToListMethod.MakeGenericMethod(new Type[] { resultItemType });
 
             var result = genericToListMethod.Invoke(queryResult, new object[] { queryResult });

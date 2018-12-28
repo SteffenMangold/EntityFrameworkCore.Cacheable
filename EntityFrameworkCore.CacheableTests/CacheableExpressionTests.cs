@@ -181,6 +181,64 @@ namespace EntityFrameworkCore.Cacheable.Tests
         }
 
         /// <summary>
+        /// Testing projection result cache functionality.
+        /// </summary>
+        [TestMethod]
+        public void SingleProjectionExpressionTest()
+        {
+            var loggerProvider = new DebugLoggerProvider();
+            var loggerFactory = new LoggerFactory(new[] { loggerProvider });
+
+            var options = new DbContextOptionsBuilder<BloggingContext>()
+                .UseLoggerFactory(loggerFactory)
+                .UseInMemoryDatabase(databaseName: "ProjectionExpressionTest")
+                .Options;
+
+            // create test entries
+            using (var initContext = new BloggingContext(options))
+            {
+                initContext.Blogs.Add(new Blog { BlogId = 1, Url = "http://sample.com/cats" });
+                initContext.Blogs.Add(new Blog { BlogId = 2, Url = "http://sample.com/catfish" });
+                initContext.Blogs.Add(new Blog { BlogId = 3, Url = "http://sample.com/dogs" });
+                initContext.SaveChanges();
+            }
+
+            using (var projectionContext = new BloggingContext(options))
+            {
+                // shoud not hit cache, because first execution
+                var result = projectionContext.Blogs
+                    .Where(d => d.BlogId == 1)
+                    .Select(d => new
+                    {
+                        d.BlogId,
+                        d.Rating
+                    })
+                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .SingleOrDefault();
+
+                // shoud hit cache, because second execution
+                var cachedResult = projectionContext.Blogs
+                    .Where(d => d.BlogId == 1)
+                    .Select(d => new
+                    {
+                        d.BlogId,
+                        d.Rating
+                    })
+                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .SingleOrDefault();
+
+                Assert.IsNotNull(result);
+                Assert.AreSame(result, cachedResult);
+            }
+
+            // find "cache hit" log entries
+            var logs = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit);
+
+            // cache should hit one time
+            Assert.IsTrue(logs.Count() == 1);
+        }
+
+        /// <summary>
         /// Testing constant result cache functionality.
         /// </summary>
         [TestMethod]
