@@ -10,77 +10,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace EntityFrameworkCore.Cacheable.Tests
 {
     [TestClass]
-    [TestCategory("EntityFrameworkCore.Cacheable.Expressions")]
-    public class CacheableExpressionTests
+    [TestCategory("EntityFrameworkCore.Cacheable.AsyncExpressions")]
+    public class CacheableAsyncExpressionTests
     {
-        /// <summary>
-        /// Testing cache expiration functionality.
-        /// </summary>
-        //[TestMethod]
-        public void ExpirationTest()
-        {
-            var loggerProvider = new DebugLoggerProvider();
-            var loggerFactory = new LoggerFactory(new[] { loggerProvider });
-
-            var options = new DbContextOptionsBuilder<BloggingContext>()
-                .UseLoggerFactory(loggerFactory)
-                .UseInMemoryDatabase(databaseName: "ExpirationTest")
-                .Options;
-
-            // create test entries
-            using (var initContext = new BloggingContext(options))
-            {
-                initContext.Blogs.Add(new Blog { BlogId = 1, Url = "http://sample.com/cats" });
-                initContext.Blogs.Add(new Blog { BlogId = 2, Url = "http://sample.com/catfish" });
-                initContext.Blogs.Add(new Blog { BlogId = 3, Url = "http://sample.com/dogs" });
-                initContext.SaveChanges();
-            }
-
-            using (var expirationContext = new BloggingContext(options))
-            {
-                // shoud not hit cache, because first execution
-                var result = expirationContext.Blogs
-                    .Where(d => d.BlogId == 1)
-                    .Cacheable(TimeSpan.FromSeconds(5))
-                    .ToList();
-
-                // shoud hit cache, because second execution
-                result = expirationContext.Blogs
-                    .Where(d => d.BlogId == 1)
-                    .Cacheable(TimeSpan.FromSeconds(5))
-                    .ToList();
-
-                // shoud not hit cache, because different parameter
-                result = expirationContext.Blogs
-                    .Where(d => d.BlogId == 2)
-                    .Cacheable(TimeSpan.FromSeconds(5))
-                    .ToList();
-
-                Thread.Sleep(TimeSpan.FromSeconds(10));
-
-                // shoud not hit cache, because expiration
-                result = expirationContext.Blogs
-                    .Where(d => d.BlogId == 1)
-                    .Cacheable(TimeSpan.FromSeconds(5))
-                    .ToList();
-            }
-
-            // find "cache hit" log entries
-            var logs = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit);
-
-            // cache should hit one time
-            Assert.IsTrue(logs.Count() == 1);
-        }
-
         /// <summary>
         /// Testing entity result cache functionality.
         /// </summary>
         [TestMethod]
-        public void EntityExpressionTest()
+        public async Task EntityAsyncExpressionTest()
         {
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -102,17 +44,18 @@ namespace EntityFrameworkCore.Cacheable.Tests
             using (var entityContext = new BloggingContext(options))
             {
                 // shoud not hit cache, because first execution
-                var result = entityContext.Blogs
+                var result = await entityContext.Blogs
                     .Where(d => d.BlogId > 1)
                     .Cacheable(TimeSpan.FromSeconds(5))
-                    .ToList();
+                    .ToListAsync();
 
                 // shoud hit cache, because second execution
-                var cachedResult = entityContext.Blogs
+                var cachedResult = await entityContext.Blogs
                     .Where(d => d.BlogId > 1)
                     .Cacheable(TimeSpan.FromSeconds(5))
-                    .ToList();
+                    .ToListAsync();
 
+                Assert.AreEqual(2, result.Count);
                 Assert.AreEqual(result.Count, cachedResult.Count);
             }
 
@@ -127,7 +70,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         /// Testing projection result cache functionality.
         /// </summary>
         [TestMethod]
-        public void ProjectionExpressionTest()
+        public async Task ProjectionAsyncExpressionTest()
         {
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -149,7 +92,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
             using (var projectionContext = new BloggingContext(options))
             {
                 // shoud not hit cache, because first execution
-                var result = projectionContext.Blogs
+                var result = await projectionContext.Blogs
                     .Where(d => d.BlogId > 1)
                     .Select(d => new
                     {
@@ -157,10 +100,10 @@ namespace EntityFrameworkCore.Cacheable.Tests
                         d.Rating
                     })
                     .Cacheable(TimeSpan.FromSeconds(5))
-                    .ToList();
+                    .ToListAsync();
 
                 // shoud hit cache, because second execution
-                var cachedResult = projectionContext.Blogs
+                var cachedResult = await projectionContext.Blogs
                     .Where(d => d.BlogId > 1)
                     .Select(d => new
                     {
@@ -168,8 +111,9 @@ namespace EntityFrameworkCore.Cacheable.Tests
                         d.Rating
                     })
                     .Cacheable(TimeSpan.FromSeconds(5))
-                    .ToList();
+                    .ToListAsync();
 
+                Assert.AreEqual(2, result.Count);
                 Assert.AreEqual(result.Count, cachedResult.Count);
             }
 
@@ -184,7 +128,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         /// Testing projection result cache functionality.
         /// </summary>
         [TestMethod]
-        public void SingleProjectionExpressionTest()
+        public async Task SingleProjectionAsyncExpressionTest()
         {
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -206,7 +150,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
             using (var projectionContext = new BloggingContext(options))
             {
                 // shoud not hit cache, because first execution
-                var result = projectionContext.Blogs
+                var result = await projectionContext.Blogs
                     .Where(d => d.BlogId == 1)
                     .Select(d => new
                     {
@@ -214,10 +158,10 @@ namespace EntityFrameworkCore.Cacheable.Tests
                         d.Rating
                     })
                     .Cacheable(TimeSpan.FromSeconds(5))
-                    .SingleOrDefault();
+                    .SingleOrDefaultAsync();
 
                 // shoud hit cache, because second execution
-                var cachedResult = projectionContext.Blogs
+                var cachedResult = await projectionContext.Blogs
                     .Where(d => d.BlogId == 1)
                     .Select(d => new
                     {
@@ -225,7 +169,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
                         d.Rating
                     })
                     .Cacheable(TimeSpan.FromSeconds(5))
-                    .SingleOrDefault();
+                    .SingleOrDefaultAsync();
 
                 Assert.IsNotNull(result);
                 Assert.AreSame(result, cachedResult);
@@ -242,7 +186,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         /// Testing constant result cache functionality.
         /// </summary>
         [TestMethod]
-        public void ConstantExpressionTest()
+        public async Task ConstantAsyncExpressionTest()
         {
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -264,19 +208,20 @@ namespace EntityFrameworkCore.Cacheable.Tests
             using (var constantContext = new BloggingContext(options))
             {
                 // shoud not hit cache, because first execution
-                var result = constantContext.Blogs
+                var result = await constantContext.Blogs
                     .Where(d => d.BlogId > 1)
                     .Select(d => d.BlogId)
                     .Cacheable(TimeSpan.FromSeconds(5))
-                    .ToList();
+                    .ToListAsync();
 
                 // shoud hit cache, because second execution
-                var cachedResult = constantContext.Blogs
+                var cachedResult = await constantContext.Blogs
                     .Where(d => d.BlogId > 1)
                     .Select(d => d.BlogId)
                     .Cacheable(TimeSpan.FromSeconds(5))
-                    .ToList();
+                    .ToListAsync();
 
+                Assert.AreEqual(2, result.Count);
                 Assert.AreEqual(result.Count, cachedResult.Count);
             }
 
@@ -285,123 +230,6 @@ namespace EntityFrameworkCore.Cacheable.Tests
 
             // cache should hit one time
             Assert.IsTrue(logs.Count() == 1);
-        }
-        
-        /// <summary>
-        /// Testing performance of cache functionality.
-        /// </summary>
-        /// <remarks>
-        /// It only tests agains InMemory database, so the test is not expected to be much faster.
-        /// </remarks>
-        [TestMethod]
-        public void PerformanceTest()
-        {
-            decimal loopCount = 1000;
-
-            var loggerProvider = new DebugLoggerProvider();
-            var loggerFactory = new LoggerFactory(new[] { loggerProvider });
-
-            var options = new DbContextOptionsBuilder<BloggingContext>()
-                .UseLoggerFactory(loggerFactory)
-                .UseInMemoryDatabase(databaseName: "PerformanceTest")
-                .Options;
-
-            // create test entries
-            using (var initContext = new BloggingContext(options))
-            {
-                initContext.ChangeTracker.AutoDetectChangesEnabled = false;
-
-                for (int i = 0; i < 100000; i++)
-                {
-                    initContext.Blogs.Add(new Blog
-                    {
-                        Url = $"http://sample.com/cat{i}",
-                        
-                        Posts = new List<Post>
-                        {
-                            { new Post {Title = $"Post{1}"} }
-                        }
-                    }); 
-                }
-                initContext.SaveChanges();
-            }
-
-            var rawOptions = new DbContextOptionsBuilder<BloggingContext>()
-                .UseLoggerFactory(loggerFactory)
-                .UseInMemoryDatabase(databaseName: "PerformanceTest")
-                .Options;
-
-            using (var performanceContext = new BloggingContext(rawOptions))
-            {
-                Stopwatch watch = new Stopwatch();
-                watch.Start();
-
-                // raw queries
-                for (int i = 0; i < loopCount; i++)
-                {
-                    var result = performanceContext.Blogs
-                        .Where(d => d.BlogId >= 0)
-                        .Take(100)
-                        .ToList();
-                }
-
-                var rawTimeSpan = watch.Elapsed;
-
-                Debug.WriteLine($"Average default context database query duration [+{TimeSpan.FromTicks((long)(rawTimeSpan.Ticks / loopCount))}].");
-            }
-
-            using (var performanceContext = new BloggingContext(options))
-            {
-                Stopwatch watch = new Stopwatch();
-                watch.Start();
-
-                // uncached queries
-                for (int i = 0; i < loopCount; i++)
-                {
-                    var result = performanceContext.Blogs
-                        .Where(d => d.BlogId >= 0)
-                        .Take(100)
-                        .ToList();
-                }
-
-                var uncachedTimeSpan = watch.Elapsed;
-
-                // caching query result
-                performanceContext.Blogs
-                    .Where(d => d.BlogId >= 0)
-                    .Cacheable(TimeSpan.FromMinutes(10))
-                    .Take(100)
-                    .ToList();
-
-                watch.Restart();
-
-                // cached queries
-                for (int i = 0; i < loopCount; i++)
-                {
-                    var result = performanceContext.Blogs
-                        .Where(d => d.BlogId >= 0)
-                        .Cacheable(TimeSpan.FromMinutes(10))
-                        .Take(100)
-                        .ToList();
-                }
-
-                var cachedTimeSpan = watch.Elapsed;
-
-
-                // find log entries
-                var queryResultsCachedCount = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.QueryResultCached).Count();
-                var cacheHitsCount = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit).Count();
-
-                // check cache event counts
-                Assert.IsTrue(queryResultsCachedCount == 1);
-                Assert.IsTrue(cacheHitsCount == loopCount);
-
-                Debug.WriteLine($"Average database query duration [+{TimeSpan.FromTicks((long)(uncachedTimeSpan.Ticks / loopCount))}].");
-                Debug.WriteLine($"Average cache query duration [+{TimeSpan.FromTicks((long)(cachedTimeSpan.Ticks / loopCount))}].");
-                Debug.WriteLine($"Cached queries are x{((Decimal)uncachedTimeSpan.Ticks / (Decimal)cachedTimeSpan.Ticks)-1:N2} times faster.");
-
-                Assert.IsTrue(cachedTimeSpan < uncachedTimeSpan);
-            }
         }
     }
 }

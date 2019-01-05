@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,8 +35,12 @@ namespace EntityFrameworkCore.CacheableTests.Logging
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
             var formatedValue = formatter(state, exception);
+            var entry =new LogMessageEntry(logLevel, eventId, formatedValue, exception);
 
-            _messageQueue.Add(new LogMessageEntry(logLevel, eventId, formatedValue, exception));
+            //var result = JsonConvert.SerializeObject(entry, Formatting.Indented);
+            //Debug.WriteLine(result);
+
+            _messageQueue.Add(entry);
         }
 
         class Scope<TState> : IDisposable

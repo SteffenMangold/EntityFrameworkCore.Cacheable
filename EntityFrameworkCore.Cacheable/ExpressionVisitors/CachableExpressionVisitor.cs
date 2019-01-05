@@ -11,12 +11,12 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityFrameworkCore.Cacheable
+namespace EntityFrameworkCore.Cacheable.ExpressionVisitors
 {
     public class CachableExpressionVisitor : ExpressionVisitor
     {
         private Boolean _isCacheable = false;
-        private TimeSpan? _timeToLive = null;
+        private CacheableOptions _options = null;
 
         public CachableExpressionVisitor()
         {
@@ -32,10 +32,10 @@ namespace EntityFrameworkCore.Cacheable
                 if (genericMethodDefinition == EntityFrameworkQueryableExtensions.CacheableMethodInfo)
                 {
                     // get parameter with "last one win"
-                    _timeToLive = node.Arguments
+                    _options = node.Arguments
                         .OfType<ConstantExpression>()
-                        .Where(a => a.Value is TimeSpan)
-                        .Select(a => (TimeSpan)a.Value)
+                        .Where(a => a.Value is CacheableOptions)
+                        .Select(a => (CacheableOptions)a.Value)
                         .Last();
 
                     _isCacheable = true;
@@ -55,12 +55,12 @@ namespace EntityFrameworkCore.Cacheable
         /// <param name="isCacheable">Is expression marked as cacheable</param>
         /// <param name="timeToLive">Timespan befor expiration of cached query result</param>
         /// <returns></returns>
-        public virtual Expression GetExtractCachableParameter(Expression expression, out Boolean isCacheable, out TimeSpan? timeToLive)
+        public virtual Expression GetExtractCachableParameter(Expression expression, out Boolean isCacheable, out CacheableOptions options)
         {
             var visitedExpression = Visit(expression);
 
             isCacheable = _isCacheable;
-            timeToLive = _timeToLive;
+            options = _options;
 
             return visitedExpression;
         }

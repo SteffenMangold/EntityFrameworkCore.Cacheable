@@ -89,6 +89,9 @@
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.1.4.0\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <HintPath>..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
     </Reference>
@@ -136,6 +139,7 @@
     <Compile Include="BusinessTestLogic\Post.cs" />
     <Compile Include="BusinessTestLogic\PostTag.cs" />
     <Compile Include="BusinessTestLogic\Tag.cs" />
+    <Compile Include="CacheableAsyncExpressionTests.cs" />
     <Compile Include="CacheableExpressionTests.cs" />
     <Compile Include="Logging\DebugLogger.cs" />
     <Compile Include="Logging\DebugLoggerProvider.cs" />
