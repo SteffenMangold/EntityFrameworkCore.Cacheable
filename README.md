@@ -102,14 +102,6 @@ var cacheableQuery = cacheableContext.Books
 -----
 
 
-## TODO
-
-- Add Async support
-- Extend options to support more kinds of caching duration (sliding windows, absolut...)
-- Replaceable ICacheProvider
-
-
-
 ## Contributors
 
 The following contributors have either created (thats only me :stuck_out_tongue_winking_eye:) the project, have contributed
