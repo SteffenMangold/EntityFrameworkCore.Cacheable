@@ -89,6 +89,16 @@ namespace EntityFrameworkCore.Cacheable
             return hash.AsBase64String();
         }
 
+        public static void ClearCache()
+        {
+            var oldCache = __cache;
 
+            __cache = new MemoryCache(new MemoryCacheOptions()
+            {
+                Clock = new SystemClock()
+            });
+
+            oldCache.Dispose();
+        }
     }
 }

@@ -41,7 +41,6 @@ You can view package page on NuGet.
 
 [![Version Status](https://img.shields.io/nuget/v/EntityFrameworkCore.Cacheable.svg)](https://www.nuget.org/packages/EntityFrameworkCore.Cacheable/)
 
-
 To install `EntityFrameworkCore.Cacheable`, run the following command in the Package Manager Console:
 
 ```

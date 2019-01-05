@@ -24,6 +24,8 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public async Task EntityAsyncExpressionTest()
         {
+            CacheProvider.ClearCache();
+
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
@@ -46,13 +48,13 @@ namespace EntityFrameworkCore.Cacheable.Tests
                 // shoud not hit cache, because first execution
                 var result = await entityContext.Blogs
                     .Where(d => d.BlogId > 1)
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .ToListAsync();
 
                 // shoud hit cache, because second execution
                 var cachedResult = await entityContext.Blogs
                     .Where(d => d.BlogId > 1)
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .ToListAsync();
 
                 Assert.AreEqual(2, result.Count);
@@ -72,6 +74,8 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public async Task ProjectionAsyncExpressionTest()
         {
+            CacheProvider.ClearCache();
+
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
@@ -99,7 +103,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
                         d.BlogId,
                         d.Rating
                     })
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .ToListAsync();
 
                 // shoud hit cache, because second execution
@@ -110,7 +114,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
                         d.BlogId,
                         d.Rating
                     })
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .ToListAsync();
 
                 Assert.AreEqual(2, result.Count);
@@ -130,6 +134,8 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public async Task SingleProjectionAsyncExpressionTest()
         {
+            CacheProvider.ClearCache();
+
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
@@ -157,7 +163,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
                         d.BlogId,
                         d.Rating
                     })
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .SingleOrDefaultAsync();
 
                 // shoud hit cache, because second execution
@@ -168,7 +174,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
                         d.BlogId,
                         d.Rating
                     })
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .SingleOrDefaultAsync();
 
                 Assert.IsNotNull(result);
@@ -188,6 +194,8 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public async Task ConstantAsyncExpressionTest()
         {
+            CacheProvider.ClearCache();
+
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
@@ -211,14 +219,14 @@ namespace EntityFrameworkCore.Cacheable.Tests
                 var result = await constantContext.Blogs
                     .Where(d => d.BlogId > 1)
                     .Select(d => d.BlogId)
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .ToListAsync();
 
                 // shoud hit cache, because second execution
                 var cachedResult = await constantContext.Blogs
                     .Where(d => d.BlogId > 1)
                     .Select(d => d.BlogId)
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .ToListAsync();
 
                 Assert.AreEqual(2, result.Count);

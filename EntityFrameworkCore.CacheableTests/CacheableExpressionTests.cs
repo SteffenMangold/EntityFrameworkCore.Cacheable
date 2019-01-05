@@ -23,6 +23,8 @@ namespace EntityFrameworkCore.Cacheable.Tests
         //[TestMethod]
         public void ExpirationTest()
         {
+            CacheProvider.ClearCache();
+
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
@@ -82,6 +84,8 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void EntityExpressionTest()
         {
+            CacheProvider.ClearCache();
+
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
@@ -104,13 +108,13 @@ namespace EntityFrameworkCore.Cacheable.Tests
                 // shoud not hit cache, because first execution
                 var result = entityContext.Blogs
                     .Where(d => d.BlogId > 1)
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .ToList();
 
                 // shoud hit cache, because second execution
                 var cachedResult = entityContext.Blogs
                     .Where(d => d.BlogId > 1)
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .ToList();
 
                 Assert.AreEqual(result.Count, cachedResult.Count);
@@ -129,6 +133,8 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void ProjectionExpressionTest()
         {
+            CacheProvider.ClearCache();
+
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
@@ -156,7 +162,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
                         d.BlogId,
                         d.Rating
                     })
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .ToList();
 
                 // shoud hit cache, because second execution
@@ -167,7 +173,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
                         d.BlogId,
                         d.Rating
                     })
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .ToList();
 
                 Assert.AreEqual(result.Count, cachedResult.Count);
@@ -186,6 +192,8 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void SingleProjectionExpressionTest()
         {
+            CacheProvider.ClearCache();
+
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
@@ -213,8 +221,10 @@ namespace EntityFrameworkCore.Cacheable.Tests
                         d.BlogId,
                         d.Rating
                     })
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .SingleOrDefault();
+
+                Thread.Sleep(TimeSpan.FromSeconds(1));
 
                 // shoud hit cache, because second execution
                 var cachedResult = projectionContext.Blogs
@@ -224,7 +234,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
                         d.BlogId,
                         d.Rating
                     })
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .SingleOrDefault();
 
                 Assert.IsNotNull(result);
@@ -244,6 +254,8 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void ConstantExpressionTest()
         {
+            CacheProvider.ClearCache();
+
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
 
@@ -267,14 +279,14 @@ namespace EntityFrameworkCore.Cacheable.Tests
                 var result = constantContext.Blogs
                     .Where(d => d.BlogId > 1)
                     .Select(d => d.BlogId)
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .ToList();
 
                 // shoud hit cache, because second execution
                 var cachedResult = constantContext.Blogs
                     .Where(d => d.BlogId > 1)
                     .Select(d => d.BlogId)
-                    .Cacheable(TimeSpan.FromSeconds(5))
+                    .Cacheable(TimeSpan.FromMinutes(5))
                     .ToList();
 
                 Assert.AreEqual(result.Count, cachedResult.Count);
@@ -296,6 +308,8 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void PerformanceTest()
         {
+            CacheProvider.ClearCache();
+
             decimal loopCount = 1000;
 
             var loggerProvider = new DebugLoggerProvider();
