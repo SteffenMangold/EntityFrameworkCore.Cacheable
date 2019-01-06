@@ -14,7 +14,7 @@ namespace EntityFrameworkCore.CacheableTests.BusinessTestLogic
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSecondLevelMemoryCache();
+            optionsBuilder.UseSecondLevelCache();
         }
 
         public DbSet<Blog> Blogs { get; set; }

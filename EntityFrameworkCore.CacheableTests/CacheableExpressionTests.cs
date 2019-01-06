@@ -23,7 +23,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         //[TestMethod]
         public void ExpirationTest()
         {
-            CacheProvider.ClearCache();
+            MemoryCacheProvider.ClearCache();
 
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -84,7 +84,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void EntityExpressionTest()
         {
-            CacheProvider.ClearCache();
+            MemoryCacheProvider.ClearCache();
 
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -133,7 +133,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void ProjectionExpressionTest()
         {
-            CacheProvider.ClearCache();
+            MemoryCacheProvider.ClearCache();
 
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -192,7 +192,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void SingleProjectionExpressionTest()
         {
-            CacheProvider.ClearCache();
+            MemoryCacheProvider.ClearCache();
 
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -254,7 +254,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void ConstantExpressionTest()
         {
-            CacheProvider.ClearCache();
+            MemoryCacheProvider.ClearCache();
 
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -308,7 +308,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public void PerformanceTest()
         {
-            CacheProvider.ClearCache();
+            MemoryCacheProvider.ClearCache();
 
             decimal loopCount = 1000;
 

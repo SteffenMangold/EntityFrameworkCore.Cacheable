@@ -15,7 +15,7 @@ It provides caching functionality for all types of query results. Based on expre
 ## How fast is it?
 
 
-This a sample result of 1,000 uncached and cached queries, called agains a really good performing MSSQL-database.
+This a sample result of 1,000 iterations of an uncached and cached query, called agains a really good performing MSSQL-database.
 
 ```
 Average database query duration [+00:00:00.1698972].
@@ -65,7 +65,7 @@ public partial class CacheableContext : DbContext
 	{
 		if (!optionsBuilder.IsConfigured)
 		{
-			optionsBuilder.UseSecondLevelMemoryCache();
+			optionsBuilder.UseSecondLevelCache();
 		}
 	}
 
@@ -76,7 +76,7 @@ Or use the `DbContextOptions` parameter overload of the `DbContext` constructor.
 
 ```csharp
 var options = new DbContextOptionsBuilder<BloggingContext>()  
-	.UseSecondLevelMemoryCache()
+	.UseSecondLevelCache()
 	.Options;
 
 using (var cacheableContext = new CacheableContext(options))
@@ -84,6 +84,14 @@ using (var cacheableContext = new CacheableContext(options))
 
     [...]
 ```
+
+Alternatively you can provide a custom implementation of `ICachingProvider` (default is `MemoryCacheProvider`).
+This provides a easy option for supporting other caching systems like [redis](https://redis.io/) or [Memcached](https://memcached.org/).
+
+```csharp
+optionsBuilder.UseSecondLevelCache(new MyCachingProvider());
+```
+
 
 ### Usage
 

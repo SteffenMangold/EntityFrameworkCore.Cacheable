@@ -147,14 +147,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EntityFrameworkCore.Cacheable\EntityFrameworkCore.Cacheable.csproj">
-      <Project>{1ED53333-5923-4C98-A982-F9378B3B410E}</Project>
-      <Name>EntityFrameworkCore.Cacheable</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EntityFrameworkCore.Cacheable\EntityFrameworkCore.Cacheable.csproj">
+      <Project>{2e5890b2-9409-45ca-977a-5ac2f5b907b2}</Project>
+      <Name>EntityFrameworkCore.Cacheable</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

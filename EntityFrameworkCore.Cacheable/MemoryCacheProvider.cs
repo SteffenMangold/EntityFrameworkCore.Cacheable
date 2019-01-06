@@ -17,7 +17,7 @@ namespace EntityFrameworkCore.Cacheable
     /// <summary>
     /// Default CacheProvider based on <see cref="MemoryCache" and <see cref="xxHashFactory"/>./>
     /// </summary>
-    public class CacheProvider : ICacheProvider
+    public class MemoryCacheProvider : ICacheProvider
     {
         private static IHashFunction __hashFunction;
         private static readonly Object __syncLock = new Object();
@@ -28,15 +28,26 @@ namespace EntityFrameworkCore.Cacheable
         });
 
         /// <summary>
-        /// Creates a new <see cref="CacheProvider"/> instance.
+        /// Creates a new <see cref="MemoryCacheProvider"/> instance.
         /// </summary>
-        static CacheProvider()
+        /// <param name="seed">
+        /// Set a hash seed.
+        /// </param>
+        public MemoryCacheProvider(ulong seed)
         {
             __hashFunction = xxHashFactory.Instance.Create(new xxHashConfig
             {
                 // 64 bit size is also used by MS-SQL server to identify queries
-                HashSizeInBits = 64
+                HashSizeInBits = 64,
+                Seed = seed
             });
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="MemoryCacheProvider"/> instance.
+        /// </summary>
+        public MemoryCacheProvider() : this(0UL)
+        {
         }
 
         /// <summary>

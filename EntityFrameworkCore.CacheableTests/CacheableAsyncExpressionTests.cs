@@ -24,7 +24,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public async Task EntityAsyncExpressionTest()
         {
-            CacheProvider.ClearCache();
+            MemoryCacheProvider.ClearCache();
 
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -74,7 +74,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public async Task ProjectionAsyncExpressionTest()
         {
-            CacheProvider.ClearCache();
+            MemoryCacheProvider.ClearCache();
 
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -134,7 +134,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public async Task SingleProjectionAsyncExpressionTest()
         {
-            CacheProvider.ClearCache();
+            MemoryCacheProvider.ClearCache();
 
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });
@@ -194,7 +194,7 @@ namespace EntityFrameworkCore.Cacheable.Tests
         [TestMethod]
         public async Task ConstantAsyncExpressionTest()
         {
-            CacheProvider.ClearCache();
+            MemoryCacheProvider.ClearCache();
 
             var loggerProvider = new DebugLoggerProvider();
             var loggerFactory = new LoggerFactory(new[] { loggerProvider });

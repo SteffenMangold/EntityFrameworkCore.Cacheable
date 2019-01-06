@@ -2,6 +2,7 @@
 using EntityFrameworkCore.Cacheable.ExpressionVisitors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.ExpressionVisitors.Internal;
@@ -36,7 +37,9 @@ namespace EntityFrameworkCore.Cacheable
         private readonly IQueryModelGenerator _queryModelGenerator;
 
         private readonly Type _contextType;
-        private readonly CacheProvider _cacheProvider;
+        private readonly ICacheProvider _cacheProvider;
+
+        private readonly CacheableOptionsExtension _cacheableOptions;
 
         private readonly Func<object, Exception, string> _logFormatter;
 
@@ -71,9 +74,15 @@ namespace EntityFrameworkCore.Cacheable
             _logger = logger;
             _contextType = currentContext.Context.GetType();
             _queryModelGenerator = queryModelGenerator;
-            _cacheProvider = new CacheProvider();
 
             _logFormatter = (queryKey, ex) => $"Cache hit for query [0x{queryKey}] with: {ex?.Message ?? "no error"}";
+
+            _cacheableOptions = currentContext.Context
+                .GetService<IDbContextServices>()
+                .ContextOptions
+                .FindExtension<CacheableOptionsExtension>();
+
+            _cacheProvider = currentContext.Context.GetService<ICacheProvider>();            
         }
         
         public override TResult Execute<TResult>(Expression query)
@@ -301,7 +310,7 @@ namespace EntityFrameworkCore.Cacheable
             IDiagnosticsLogger<DbLoggerCategory.Query> logger,
             Type contextType,
             Func<object, Exception, string> logFormatter,
-            CacheProvider cacheProvider,
+            ICacheProvider cacheProvider,
             object queryKey,
             CacheableOptions options)
         {

@@ -3,19 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFrameworkCore.Cacheable", "EntityFrameworkCore.Cacheable\EntityFrameworkCore.Cacheable.csproj", "{1ED53333-5923-4C98-A982-F9378B3B410E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C98FF34D-52C3-44DA-9740-263E47AB5490}"
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		LICENSE = LICENSE
 		nuget_icon.png = nuget_icon.png
+		nuget_icon_light.ico = nuget_icon_light.ico
 		nuget_icon_light.png = nuget_icon_light.png
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFrameworkCore.CacheableTests", "EntityFrameworkCore.CacheableTests\EntityFrameworkCore.CacheableTests.csproj", "{F8950EB7-EAA3-42B3-B853-D8319A0845BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFrameworkCore.Cacheable", "EntityFrameworkCore.Cacheable\EntityFrameworkCore.Cacheable.csproj", "{2E5890B2-9409-45CA-977A-5AC2F5B907B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +24,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1ED53333-5923-4C98-A982-F9378B3B410E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1ED53333-5923-4C98-A982-F9378B3B410E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1ED53333-5923-4C98-A982-F9378B3B410E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1ED53333-5923-4C98-A982-F9378B3B410E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F8950EB7-EAA3-42B3-B853-D8319A0845BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8950EB7-EAA3-42B3-B853-D8319A0845BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8950EB7-EAA3-42B3-B853-D8319A0845BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8950EB7-EAA3-42B3-B853-D8319A0845BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E5890B2-9409-45CA-977A-5AC2F5B907B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E5890B2-9409-45CA-977A-5AC2F5B907B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E5890B2-9409-45CA-977A-5AC2F5B907B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E5890B2-9409-45CA-977A-5AC2F5B907B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
