@@ -12,7 +12,7 @@ Entity Framework (EF) Core Cacheable is an extention library for the popular Ent
 
 It provides caching functionality for all types of query results. Based on expression tree and parameters, the context decide rather to execute query against database or returning result from memory.
 
-## How fast is it?
+## How caching affects performance
 
 
 This a sample result of 1,000 iterations of an uncached and cached query, called agains a really good performing MSSQL-database.
@@ -39,7 +39,7 @@ Install via NuGet
 
 You can view package page on NuGet.
 
-[![Version Status](https://img.shields.io/nuget/v/EntityFrameworkCore.Cacheable.svg)](https://www.nuget.org/packages/EntityFrameworkCore.Cacheable/)
+[![NuGet Version Status](https://buildstats.info/nuget/EntityFrameworkCore.Cacheable)](https://www.nuget.org/packages/EntityFrameworkCore.Cacheable/)
 
 To install `EntityFrameworkCore.Cacheable`, run the following command in the Package Manager Console:
 
@@ -86,7 +86,7 @@ using (var cacheableContext = new CacheableContext(options))
 ```
 
 Alternatively you can provide a custom implementation of `ICachingProvider` (default is `MemoryCacheProvider`).
-This provides a easy option for supporting other caching systems like [redis](https://redis.io/) or [Memcached](https://memcached.org/).
+This provides a easy option for supporting other caching systems like [![](https://redis.io/images/favicon.png) redis](https://redis.io/) or [Memcached](https://memcached.org/).
 
 ```csharp
 optionsBuilder.UseSecondLevelCache(new MyCachingProvider());
