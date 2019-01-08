@@ -9,13 +9,14 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageIconUrl>https://raw.githubusercontent.com/SteffenMangold/EntityFrameworkCore.Cacheable/master/nuget_icon_light.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/SteffenMangold/EntityFrameworkCore.Cacheable/blob/master/LICENSE</PackageLicenseUrl>
-    <Copyright>Copyright 2018</Copyright>
+    <Copyright>Copyright Steffen Mangold 2018</Copyright>
     <PackageTags>entity-framework database c-sharp dotnet-core dotnet-standard dotnet-framework orm cache</PackageTags>
-    <RepositoryUrl></RepositoryUrl>
+    <RepositoryUrl>https://github.com/SteffenMangold/EntityFrameworkCore.Cacheable</RepositoryUrl>
     <PackageProjectUrl>https://github.com/SteffenMangold/EntityFrameworkCore.Cacheable</PackageProjectUrl>
     <Description>Entity Framework (EF) Core Cacheable is a high performance second level query cache extention library, for the popular Entity Framework data access technology.
 It provides caching functionality for all types of query results. Based on expression tree and parameters, the context decide rather to execute query against database or returning result from memory.</Description>
     <ApplicationIcon>nuget_icon_light.ico</ApplicationIcon>
+    <RepositoryType>github</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>

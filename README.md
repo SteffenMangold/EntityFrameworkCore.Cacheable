@@ -1,10 +1,26 @@
-﻿# EntityFrameworkCore.Cacheable
+﻿
 
-[![Build status](https://ci.appveyor.com/api/projects/status/8h2kg4gjcv85w6wg?svg=true)](https://ci.appveyor.com/project/SteffenMangold/entityframeworkcore-cacheable)
-[![Maintainability](https://api.codeclimate.com/v1/badges/541ce9c419c532bcd292/maintainability)](https://codeclimate.com/github/SteffenMangold/EntityFrameworkCore.Cacheable/maintainability)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/SteffenMangold/EntityFrameworkCore.Cacheable.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/SteffenMangold/EntityFrameworkCore.Cacheable/alerts/)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/SteffenMangold/EntityFrameworkCore.Cacheable/master/nuget_icon_light.png?size=72" width="96"/>
+</p>
 
-A high performance second level query cache for [Entity Framework Core](https://github.com/aspnet/EntityFrameworkCore).
+<h3 align="center">
+  EntityFrameworkCore.Cacheable
+</h3>
+
+<p align="center">
+  A high performance second level query cache for <a href="https://github.com/aspnet/EntityFrameworkCore">Entity Framework Core</a>.
+</p>
+
+<p align="center">
+  <a href="https://ci.appveyor.com/project/SteffenMangold/entityframeworkcore-cacheable"><img src="https://ci.appveyor.com/api/projects/status/8h2kg4gjcv85w6wg?svg=true"></a>
+  <a href="https://codeclimate.com/github/SteffenMangold/EntityFrameworkCore.Cacheable/maintainability"><img src="https://api.codeclimate.com/v1/badges/541ce9c419c532bcd292/maintainability"></a>
+  <a href="https://lgtm.com/projects/g/SteffenMangold/EntityFrameworkCore.Cacheable/alerts/"><img src="https://img.shields.io/lgtm/alerts/g/SteffenMangold/EntityFrameworkCore.Cacheable.svg?logo=lgtm&logoWidth=18"></a>
+  <a href="https://www.nuget.org/packages/EntityFrameworkCore.Cacheable/"><img src="https://buildstats.info/nuget/EntityFrameworkCore.Cacheable"></a>
+</p>
+
+<br/>
+<br/>
 
 ## What is EF Core Cacheable?
 
@@ -34,12 +50,9 @@ Cached queries are x63 times faster.
 The performance gain can be even higher, depending on the database performance.
 
 
-Install via NuGet
------------------
+## Install via NuGet
 
-You can view package page on NuGet.
-
-[![NuGet Version Status](https://buildstats.info/nuget/EntityFrameworkCore.Cacheable)](https://www.nuget.org/packages/EntityFrameworkCore.Cacheable/)
+You can view the [package page on NuGet](https://www.nuget.org/packages/EntityFrameworkCore.Cacheable/).
 
 To install `EntityFrameworkCore.Cacheable`, run the following command in the Package Manager Console:
 
@@ -51,17 +64,14 @@ PM> Install-Package EntityFrameworkCore.Cacheable
 This library also uses the [Data.HashFunction](https://github.com/brandondahler/Data.HashFunction/) and [aspnet.Extensions](https://github.com/aspnet/Extensions) as InMemory cache.
 
 
-## Usage
-
-
-### Configuring a DbContext
+## Configuring a DbContext
 
 There are three types of configuring the DbContext to support `Cachable`.
 Each sample use `UseSqlite` as option only for showing the pattern.
 
 For more information about this, please read [configuring DbContextOptions](https://docs.microsoft.com/de-de/ef/core/miscellaneous/configuring-dbcontext#configuring-dbcontextoptions).
 
-##### Constructor argument
+### Constructor argument
 
 Application code to initialize from constructor argument:
 
@@ -77,7 +87,7 @@ using (var context = new CacheableBloggingContext(optionsBuilder.Options))
 }
 ```
 
-##### OnConfiguring
+### OnConfiguring
 
 Context code with `OnConfiguring`:
 
@@ -97,7 +107,7 @@ public partial class CacheableBloggingContext : DbContext
 }
 ```
 
-##### Using DbContext with dependency injection
+### Using DbContext with dependency injection
 
 Adding the Dbcontext to dependency injection:
 
@@ -114,18 +124,7 @@ public void ConfigureServices(IServiceCollection services)
 This requires [adding a constructor argument](https://docs.microsoft.com/de-de/ef/core/miscellaneous/configuring-dbcontext#using-dbcontext-with-dependency-injection) to your DbContext type that accepts DbContextOptions<TContext>.
 
 
-### Custom Cache Provider
-
-
-Alternatively you can provide a custom implementation of `ICachingProvider` (default is `MemoryCacheProvider`).
-This provides a easy option for supporting other caching systems like [![](https://redis.io/images/favicon.png) redis](https://redis.io/) or [Memcached](https://memcached.org/).
-
-```csharp
-optionsBuilder.UseSecondLevelCache(new MyCachingProvider());
-```
-
-
-### Usage
+## Usage
 
 To get in use of result caching, you simply need to add `.Cacheable(...` to your query and define a TTL parameter.
 
@@ -138,7 +137,18 @@ var cacheableQuery = cacheableContext.Books
 	.Cacheable(TimeSpan.FromSeconds(60));
 ```
 
------
+### Custom Cache Provider
+
+
+Alternatively you can provide a custom implementation of `ICachingProvider` (default is `MemoryCacheProvider`).
+This provides a easy option for supporting other caching systems like [![](https://redis.io/images/favicon.png) redis](https://redis.io/) or [Memcached](https://memcached.org/).
+
+```csharp
+optionsBuilder.UseSecondLevelCache(new MyCachingProvider());
+```
+
+
+-----------------
 
 
 ## Contributors
