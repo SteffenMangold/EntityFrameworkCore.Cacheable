@@ -54,36 +54,68 @@ This library also uses the [Data.HashFunction](https://github.com/brandondahler/
 ## Usage
 
 
-### Configuration
+### Configuring a DbContext
 
-You can either override the `OnModelCreating` method in your derived context and use the ModelBuilder API to configure your model and add cachable support.
+There are three types of configuring the DbContext to support `Cachable`.
+Each sample use `UseSqlite` as option only for showing the pattern.
 
-```csharp
-public partial class CacheableContext : DbContext
-{
-	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-	{
-		if (!optionsBuilder.IsConfigured)
-		{
-			optionsBuilder.UseSecondLevelCache();
-		}
-	}
+For more information about this, please read [configuring DbContextOptions](https://docs.microsoft.com/de-de/ef/core/miscellaneous/configuring-dbcontext#configuring-dbcontextoptions).
 
-    [...]
-```
+##### Constructor argument
 
-Or use the `DbContextOptions` parameter overload of the `DbContext` constructor.
+Application code to initialize from constructor argument:
 
 ```csharp
-var options = new DbContextOptionsBuilder<BloggingContext>()  
-	.UseSecondLevelCache()
-	.Options;
+var optionsBuilder = new DbContextOptionsBuilder<CacheableBloggingContext>();
+optionsBuilder
+    .UseSqlite("Data Source=blog.db")
+    .UseSecondLevelCache();
 
-using (var cacheableContext = new CacheableContext(options))
+using (var context = new CacheableBloggingContext(optionsBuilder.Options))
 {
-
-    [...]
+    // do stuff
+}
 ```
+
+##### OnConfiguring
+
+Context code with `OnConfiguring`:
+
+```csharp
+public partial class CacheableBloggingContext : DbContext
+{
+    public DbSet<Blog> Blogs { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlite("Data Source=blog.db");
+            optionsBuilder.UseSecondLevelCache();
+        }
+    }
+}
+```
+
+##### Using DbContext with dependency injection
+
+Adding the Dbcontext to dependency injection:
+
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDbContext<CacheableBloggingContext>(options => options
+        .UseSqlite("Data Source=blog.db"))
+        .UseSecondLevelCache();
+}
+```
+
+
+This requires [adding a constructor argument](https://docs.microsoft.com/de-de/ef/core/miscellaneous/configuring-dbcontext#using-dbcontext-with-dependency-injection) to your DbContext type that accepts DbContextOptions<TContext>.
+
+
+### Custom Cache Provider
+
 
 Alternatively you can provide a custom implementation of `ICachingProvider` (default is `MemoryCacheProvider`).
 This provides a easy option for supporting other caching systems like [![](https://redis.io/images/favicon.png) redis](https://redis.io/) or [Memcached](https://memcached.org/).
