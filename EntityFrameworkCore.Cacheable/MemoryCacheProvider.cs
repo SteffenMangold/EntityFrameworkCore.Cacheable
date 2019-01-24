@@ -91,7 +91,7 @@ namespace EntityFrameworkCore.Cacheable
             // if query has parameter add key values as uri-query string
             if (parameterValues.Count > 0)
             {
-                var parameterStrings = parameterValues.Select(d => $"{d.Key}={d.Value.GetHashCode()}");
+                var parameterStrings = parameterValues.Select(d => $"{d.Key}={d.Value?.GetHashCode()}");
                 expressionCacheKey += $"?{String.Join("&", parameterStrings)}";
             }
 

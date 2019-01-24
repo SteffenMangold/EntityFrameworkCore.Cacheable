@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>2.0.0.0</Version>
+    <Version>2.0.1.0</Version>
     <Authors>Steffen Mangold</Authors>
     <Company />
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -17,6 +17,8 @@
 It provides caching functionality for all types of query results. Based on expression tree and parameters, the context decide rather to execute query against database or returning result from memory.</Description>
     <ApplicationIcon>nuget_icon_light.ico</ApplicationIcon>
     <RepositoryType>github</RepositoryType>
+    <AssemblyVersion>2.0.1.0</AssemblyVersion>
+    <FileVersion>2.0.1.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
