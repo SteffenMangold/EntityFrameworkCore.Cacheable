@@ -354,6 +354,56 @@ namespace EntityFrameworkCore.Cacheable.Tests
             Assert.IsTrue(logs.Count() == 1);
         }
 
+        /// <summary>
+        /// Testing null parameter query .
+        /// </summary>
+        [TestMethod]
+        public void GlobalQueryFilterTest()
+        {
+            MemoryCacheProvider.ClearCache();
+
+            var loggerProvider = new DebugLoggerProvider();
+            var loggerFactory = new LoggerFactory(new[] { loggerProvider });
+
+            var options = new DbContextOptionsBuilder<BloggingContext>()
+                .UseLoggerFactory(loggerFactory)
+                .UseInMemoryDatabase(databaseName: "GlobalQueryFilterTest")
+                .Options;
+
+            // create test entries
+            using (var initContext = new BloggingContext(options))
+            {
+                initContext.Blogs.Add(new Blog { BlogId = 1, Url = "http://sample.com/cats" });
+                initContext.Blogs.Add(new Blog { BlogId = 2, Url = "http://sample.com/catfish" });
+                initContext.Blogs.Add(new Blog { BlogId = 3, Url = "http://sample.com/dogs" });
+                initContext.SaveChanges();
+            }
+
+            using (var constantContext = new BloggingContext(options, minBlogId: 2))
+            {
+                // shoud not hit cache, because no Cacheable call
+                var rawResult = constantContext.Blogs
+                    .Count();
+
+                // shoud not hit cache, because first execution
+                var result = constantContext.Blogs
+                    .Cacheable(TimeSpan.FromMinutes(5))
+                    .Count();
+
+                // shoud hit cache, because second execution
+                var cachedResult = constantContext.Blogs
+                    .Cacheable(TimeSpan.FromMinutes(5))
+                    .Count();
+
+                Assert.AreEqual(result, cachedResult);
+            }
+
+            // find "cache hit" log entries
+            var logs = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit);
+
+            // cache should hit one time
+            Assert.IsTrue(logs.Count() == 1);
+        }
 
         /// <summary>
         /// Testing performance of cache functionality.
