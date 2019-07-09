@@ -1,27 +1,22 @@
 ﻿using EntityFrameworkCore.Cacheable.Diagnostics;
-using EntityFrameworkCore.CacheableTests;
 using EntityFrameworkCore.CacheableTests.BusinessTestLogic;
 using EntityFrameworkCore.CacheableTests.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace EntityFrameworkCore.Cacheable.Tests
 {
-    [TestClass]
-    [TestCategory("EntityFrameworkCore.Cacheable.AsyncExpressions")]
+    [Trait("Category","EntityFrameworkCore.Cacheable.AsyncExpressions")]
     public class CacheableAsyncExpressionTests
     {
         /// <summary>
         /// Testing entity result cache functionality.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task EntityAsyncExpressionTest()
         {
             MemoryCacheProvider.ClearCache();
@@ -57,21 +52,21 @@ namespace EntityFrameworkCore.Cacheable.Tests
                     .Cacheable(TimeSpan.FromMinutes(5))
                     .ToListAsync();
 
-                Assert.AreEqual(2, result.Count);
-                Assert.AreEqual(result.Count, cachedResult.Count);
+                Assert.Equal(2, result.Count);
+                Assert.Equal(result.Count, cachedResult.Count);
             }
 
             // find "cache hit" log entries
             var logs = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit);
 
             // cache should hit one time
-            Assert.IsTrue(logs.Count() == 1);
+            Assert.True(logs.Count() == 1);
         }
 
         /// <summary>
         /// Testing projection result cache functionality.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task ProjectionAsyncExpressionTest()
         {
             MemoryCacheProvider.ClearCache();
@@ -117,21 +112,21 @@ namespace EntityFrameworkCore.Cacheable.Tests
                     .Cacheable(TimeSpan.FromMinutes(5))
                     .ToListAsync();
 
-                Assert.AreEqual(2, result.Count);
-                Assert.AreEqual(result.Count, cachedResult.Count);
+                Assert.Equal(2, result.Count);
+                Assert.Equal(result.Count, cachedResult.Count);
             }
 
             // find "cache hit" log entries
             var logs = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit);
 
             // cache should hit one time
-            Assert.IsTrue(logs.Count() == 1);
+            Assert.True(logs.Count() == 1);
         }
 
         /// <summary>
         /// Testing projection result cache functionality.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task SingleProjectionAsyncExpressionTest()
         {
             MemoryCacheProvider.ClearCache();
@@ -177,21 +172,21 @@ namespace EntityFrameworkCore.Cacheable.Tests
                     .Cacheable(TimeSpan.FromMinutes(5))
                     .SingleOrDefaultAsync();
 
-                Assert.IsNotNull(result);
-                Assert.AreSame(result, cachedResult);
+                Assert.NotNull(result);
+                Assert.Same(result, cachedResult);
             }
 
             // find "cache hit" log entries
             var logs = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit);
 
             // cache should hit one time
-            Assert.IsTrue(logs.Count() == 1);
+            Assert.True(logs.Count() == 1);
         }
 
         /// <summary>
         /// Testing constant result cache functionality.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task ConstantAsyncExpressionTest()
         {
             MemoryCacheProvider.ClearCache();
@@ -229,15 +224,15 @@ namespace EntityFrameworkCore.Cacheable.Tests
                     .Cacheable(TimeSpan.FromMinutes(5))
                     .ToListAsync();
 
-                Assert.AreEqual(2, result.Count);
-                Assert.AreEqual(result.Count, cachedResult.Count);
+                Assert.Equal(2, result.Count);
+                Assert.Equal(result.Count, cachedResult.Count);
             }
 
             // find "cache hit" log entries
             var logs = loggerProvider.Entries.Where(e => e.EventId == CacheableEventId.CacheHit);
 
             // cache should hit one time
-            Assert.IsTrue(logs.Count() == 1);
+            Assert.True(logs.Count() == 1);
         }
     }
 }
