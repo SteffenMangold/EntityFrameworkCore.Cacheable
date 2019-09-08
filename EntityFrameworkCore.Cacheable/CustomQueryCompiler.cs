@@ -223,12 +223,12 @@ namespace EntityFrameworkCore.Cacheable
                 // generate key to identify query
                 var queryKey = _cacheProvider.CreateQueryKey(query, queryContext.ParameterValues);
 
-                if (_cacheProvider.TryGetCachedResult<IAsyncEnumerable<TResult>>(queryKey, out IAsyncEnumerable<TResult> cacheResult))
+                if (_cacheProvider.TryGetCachedResult<IEnumerable<TResult>>(queryKey, out IEnumerable<TResult> cacheResult))
                 {
                     _logger.Logger.Log<object>(LogLevel.Debug, CacheableEventId.CacheHit, queryKey, null, _logFormatter);
 
                     //cache was hit, so return cached query result
-                    return cacheResult;
+                    return cacheResult.ToAsyncEnumerable();
                 }
                 else // cache was not hit
                 {
