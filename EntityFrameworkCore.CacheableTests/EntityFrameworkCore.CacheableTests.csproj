@@ -142,6 +142,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BusinessTestLogic\Blog.cs" />
+    <Compile Include="BusinessTestLogic\AgnosticBloggingContext.cs" />
     <Compile Include="BusinessTestLogic\BloggingContext.cs" />
     <Compile Include="BusinessTestLogic\Person.cs" />
     <Compile Include="BusinessTestLogic\PersonPhoto.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="BusinessTestLogic\PostTag.cs" />
     <Compile Include="BusinessTestLogic\Tag.cs" />
     <Compile Include="CacheableAsyncExpressionTests.cs" />
+    <Compile Include="CacheableAgnosticContextTests.cs" />
     <Compile Include="CacheableExpressionTests.cs" />
     <Compile Include="Logging\DebugLogger.cs" />
     <Compile Include="Logging\DebugLoggerProvider.cs" />
