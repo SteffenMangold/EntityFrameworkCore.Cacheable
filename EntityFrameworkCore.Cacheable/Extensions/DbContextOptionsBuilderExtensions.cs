@@ -30,5 +30,29 @@ namespace EntityFrameworkCore.Cacheable
 
             return optionsBuilder;
         }
+
+        /// <summary>
+        /// Configures the context to support second level query caching.
+        /// </summary>
+        /// <param name="optionsBuilder">The builder being used to configure the context.</param>
+        /// <returns>The options builder so that further configuration can be chained.</returns>
+        public static DbContextOptionsBuilder<TContext> UseSecondLevelCache<TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder) where TContext : DbContext
+        {
+            return optionsBuilder.UseSecondLevelCache(new MemoryCacheProvider());
+        }
+
+        /// <summary>
+        /// Configures the context to support second level query caching.
+        /// </summary>
+        /// <param name="optionsBuilder">The builder being used to configure the context.</param>
+        /// <returns>The options builder so that further configuration can be chained.</returns>
+        public static DbContextOptionsBuilder<TContext> UseSecondLevelCache<TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder, ICacheProvider cacheProvider) where TContext : DbContext
+        {
+            optionsBuilder.ReplaceService<IQueryCompiler, CustomQueryCompiler>();
+
+            ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(new CacheableOptionsExtension(cacheProvider));
+
+            return optionsBuilder;
+        }
     }
 }
