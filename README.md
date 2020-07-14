@@ -140,7 +140,7 @@ var cacheableQuery = cacheableContext.Books
 ### Custom Cache Provider
 
 
-Alternatively you can provide a custom implementation of `ICachingProvider` (default is `MemoryCacheProvider`).
+Alternatively you can provide a custom implementation of `ICacheProvider` (default is `MemoryCacheProvider`).
 This provides a easy option for supporting other caching systems like [![](https://redis.io/images/favicon.png) redis](https://redis.io/) or [Memcached](https://memcached.org/).
 
 ```csharp
