@@ -144,7 +144,7 @@ Alternatively you can provide a custom implementation of `ICacheProvider` (defau
 This provides a easy option for supporting other caching systems like [![](https://redis.io/images/favicon.png) redis](https://redis.io/) or [Memcached](https://memcached.org/).
 
 ```csharp
-optionsBuilder.UseSecondLevelCache(new MyCachingProvider());
+optionsBuilder.UseSecondLevelCache(new MyCacheProvider());
 ```
 
 
