@@ -9,7 +9,7 @@
 </h3>
 
 <p align="center">
-  A high performance second level query cache for <a href="https://github.com/aspnet/EntityFrameworkCore">Entity Framework Core</a>.
+  A high-performance second-level query cache for <a href="https://github.com/aspnet/EntityFrameworkCore">Entity Framework Core</a>.
 </p>
 
 <p align="center">
@@ -31,7 +31,7 @@ It provides caching functionality for all types of query results. Based on the e
 ## How caching affects performance
 
 
-This a sample result of 1,000 iterations of an uncached and cached query, called agains a good performing MSSQL-database.
+This is a sample result of 1,000 iterations of an uncached and cached query called against a well-performing MSSQL database.
 
 ```
 Average database query duration [+00:00:00.1698972].
@@ -66,8 +66,8 @@ This library also uses the [Data.HashFunction](https://github.com/brandondahler/
 
 ## Configuring a DbContext
 
-There are three types of configurations for the DbContext to support `Cachable`.
-Each sample uses `UseSqlite` as an option only for showing the pattern.
+There are three types of configurations for the DbContext to support `Cachable.`
+Each sample only uses' UseSqlite' to show the pattern.
 
 For more information about this, please read [configuring DbContextOptions](https://docs.microsoft.com/de-de/ef/core/miscellaneous/configuring-dbcontext#configuring-dbcontextoptions).
 
@@ -126,7 +126,7 @@ This requires [adding a constructor argument](https://docs.microsoft.com/de-de/e
 
 ## Usage
 
-To get in use of result caching, you simply need to add `.Cacheable(...` to your query and define a TTL parameter.
+To use result caching, you simply need to add `.Cacheable(...` to your query and define a TTL parameter.
 
 
 ```csharp
@@ -153,7 +153,7 @@ optionsBuilder.UseSecondLevelCache(new MyCachingProvider());
 
 ## Contributors
 
-The following contributors have either created (that only me :stuck_out_tongue_winking_eye:) the project, have contributed
+The following contributors have either created (that only me:stuck_out_tongue_winking_eye:) the project, have contributed
 code, are actively maintaining it (including documentation), or in other ways
 being helpful contributors to this project. 
 
