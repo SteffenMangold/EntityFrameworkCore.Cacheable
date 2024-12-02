@@ -24,14 +24,14 @@
 
 ## What is EF Core Cacheable?
 
-Entity Framework (EF) Core Cacheable is an extention library for the popular Entity Framework data access technology.
+Entity Framework (EF) Core Cacheable is an extension library for the popular Entity Framework data access technology.
 
-It provides caching functionality for all types of query results. Based on expression tree and parameters, the context decide rather to execute query against database or returning result from memory.
+It provides caching functionality for all types of query results. Based on the expression tree and parameters, the context decides whether to execute the query against the database or return the result from memory.
 
 ## How caching affects performance
 
 
-This a sample result of 1,000 iterations of an uncached and cached query, called agains a really good performing MSSQL-database.
+This a sample result of 1,000 iterations of an uncached and cached query, called agains a good performing MSSQL-database.
 
 ```
 Average database query duration [+00:00:00.1698972].
@@ -39,7 +39,7 @@ Average cache query duration [+00:00:00.0000650].
 Cached queries are x2,611 times faster.
 ```
 
-Even with a InMemory test database, the results are significant faster.
+Even with an InMemory test database, the results are significantly faster.
 
 ```
 Average database query duration [+00:00:00.0026076].
@@ -66,8 +66,8 @@ This library also uses the [Data.HashFunction](https://github.com/brandondahler/
 
 ## Configuring a DbContext
 
-There are three types of configuring the DbContext to support `Cachable`.
-Each sample use `UseSqlite` as option only for showing the pattern.
+There are three types of configurations for the DbContext to support `Cachable`.
+Each sample uses `UseSqlite` as an option only for showing the pattern.
 
 For more information about this, please read [configuring DbContextOptions](https://docs.microsoft.com/de-de/ef/core/miscellaneous/configuring-dbcontext#configuring-dbcontextoptions).
 
@@ -140,8 +140,8 @@ var cacheableQuery = cacheableContext.Books
 ### Custom Cache Provider
 
 
-Alternatively you can provide a custom implementation of `ICacheProvider` (default is `MemoryCacheProvider`).
-This provides a easy option for supporting other caching systems like [![](https://redis.io/images/favicon.png) redis](https://redis.io/) or [Memcached](https://memcached.org/).
+Alternatively, you can provide a custom implementation of `ICacheProvider` (default is `MemoryCacheProvider`).
+This provides an easy option for supporting other caching systems like [![](https://redis.io/images/favicon.png) redis](https://redis.io/) or [Memcached](https://memcached.org/).
 
 ```csharp
 optionsBuilder.UseSecondLevelCache(new MyCachingProvider());
@@ -153,9 +153,9 @@ optionsBuilder.UseSecondLevelCache(new MyCachingProvider());
 
 ## Contributors
 
-The following contributors have either created (thats only me :stuck_out_tongue_winking_eye:) the project, have contributed
+The following contributors have either created (that only me :stuck_out_tongue_winking_eye:) the project, have contributed
 code, are actively maintaining it (including documentation), or in other ways
-being helpfull contributors to this project. 
+being helpful contributors to this project. 
 
 
 |                                                                                    | Name                  | GitHub                                                  |
